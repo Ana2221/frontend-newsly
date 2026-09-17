@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nite Jr — Fale com a gente</title>
+    <meta name="description"
+        content="Nite Jr, empresa júnior de tecnologia da UFMA especializada em soluções de software. Entre em contato para iniciar seu projeto." />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../script/script.js"></script>
+    <!-- Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#1A73E8',
+                            dark: '#1557b0',
+                            light: '#e8f0fe',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        body {
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
+
+    <main class="mx-auto max-w-6xl px-6 py-10 lg:py-16">
+        <div class="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
+
+            <!-- Coluna esquerda: informações da empresa -->
+            <section class="flex flex-col">
+                <span
+                    class="inline-flex w-fit items-center gap-2 rounded-full bg-brand-light px-4 py-1.5 text-sm font-semibold text-brand">
+                    <span class="h-2 w-2 rounded-full bg-brand"></span>
+                    Soluções de software
+                </span>
+
+                <h1 class="mt-6 text-4xl font-extrabold tracking-tight text-balance lg:text-5xl">
+                    Vamos construir seu próximo <span class="text-brand">projeto de inovação</span>
+                </h1>
+
+                <!-- Cartões de contato -->
+                <div class="mt-10 space-y-4">
+                    <div class="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5">
+                        <div
+                            class="flex h-11 w-11 flex-none items-center justify-center rounded-xl bg-brand-light text-brand">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Telefone</p>
+                            <p class="mt-1 font-semibold">(98) 99999-8888</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5">
+                        <div
+                            class="flex h-11 w-11 flex-none items-center justify-center rounded-xl bg-brand-light text-brand">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <rect width="20" height="16" x="2" y="4" rx="2" />
+                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">E-mail</p>
+                            <p class="mt-1 font-semibold">contato@nitejr.com.br</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5">
+                        <div
+                            class="flex h-11 w-11 flex-none items-center justify-center rounded-xl bg-brand-light text-brand">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M3 21h18" />
+                                <path d="M5 21V7l8-4v18" />
+                                <path d="M19 21V11l-6-4" />
+                                <path d="M9 9v.01" />
+                                <path d="M9 12v.01" />
+                                <path d="M9 15v.01" />
+                                <path d="M9 18v.01" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">CNPJ</p>
+                            <p class="mt-1 font-semibold">12.345.678/0001-90</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Coluna direita: formulário -->
+            <section x-data="niteForm()" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+
+                <!-- Estado de sucesso -->
+                <div x-show="enviado" x-cloak class="flex flex-col items-center justify-center py-16 text-center">
+                    <div class="flex h-16 w-16 items-center justify-center rounded-full bg-brand-light text-brand">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                    </div>
+                    <h2 class="mt-5 text-2xl font-bold">Mensagem enviada!</h2>
+                    <p class="mt-2 max-w-sm text-slate-600">
+                        Obrigado, <span class="font-semibold" x-text="form.nome"></span>. A equipe da Nite Jr entrará em
+                        contato pelo e-mail informado.
+                    </p>
+                    <button type="button" @click="resetar()"
+                        class="mt-6 rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold transition hover:bg-slate-50">
+                        Enviar outra mensagem
+                    </button>
+                </div>
+
+                <!-- Formulário -->
+                <form x-show="!enviado" @submit.prevent="enviar()" class="space-y-5" novalidate>
+                    <div>
+                        <h2 class="text-2xl font-bold">Solicite um orçamento</h2>
+                        <p class="mt-1 text-sm text-slate-500">Preencha os dados abaixo e retornaremos em breve.</p>
+                    </div>
+
+                    <!-- Nome -->
+                    <div>
+                        <label for="nome" class="mb-1.5 block text-sm font-semibold">Nome da empresa / contato</label>
+                        <input id="nome" type="text" x-model="form.nome" @input="erros.nome = ''"
+                            placeholder="Ex.: Nite Jr"
+                            class="w-full rounded-xl border bg-white px-4 py-3 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                            :class="erros.nome ? 'border-red-400' : 'border-slate-300'" />
+                        <p x-show="erros.nome" x-cloak class="mt-1 text-xs text-red-500" x-text="erros.nome"></p>
+                    </div>
+
+                    <!-- CNPJ -->
+                    <div>
+                        <label for="cnpj" class="mb-1.5 block text-sm font-semibold">CNPJ</label>
+                        <input id="cnpj" type="text" inputmode="numeric" x-model="form.cnpj"
+                            @input="form.cnpj = mascaraCnpj($event.target.value); erros.cnpj = ''"
+                            placeholder="00.000.000/0000-00" maxlength="18"
+                            class="w-full rounded-xl border bg-white px-4 py-3 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                            :class="erros.cnpj ? 'border-red-400' : 'border-slate-300'" />
+                        <p x-show="erros.cnpj" x-cloak class="mt-1 text-xs text-red-500" x-text="erros.cnpj"></p>
+                    </div>
+
+                    <div class="grid gap-5 sm:grid-cols-2">
+                        <!-- Telefone -->
+                        <div>
+                            <label for="telefone" class="mb-1.5 block text-sm font-semibold">Telefone</label>
+                            <input id="telefone" type="tel" inputmode="tel" x-model="form.telefone"
+                                @input="form.telefone = mascaraTelefone($event.target.value); erros.telefone = ''"
+                                placeholder="(98) 99999-8888" maxlength="15"
+                                class="w-full rounded-xl border bg-white px-4 py-3 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                                :class="erros.telefone ? 'border-red-400' : 'border-slate-300'" />
+                            <p x-show="erros.telefone" x-cloak class="mt-1 text-xs text-red-500"
+                                x-text="erros.telefone"></p>
+                        </div>
+
+                        <!-- E-mail -->
+                        <div>
+                            <label for="email" class="mb-1.5 block text-sm font-semibold">E-mail</label>
+                            <input id="email" type="email" x-model="form.email" @input="erros.email = ''"
+                                placeholder="contato@nitejr.com.br"
+                                class="w-full rounded-xl border bg-white px-4 py-3 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                                :class="erros.email ? 'border-red-400' : 'border-slate-300'" />
+                            <p x-show="erros.email" x-cloak class="mt-1 text-xs text-red-500" x-text="erros.email"></p>
+                        </div>
+                    </div>
+
+                    <!-- Descrição -->
+                    <div>
+                        <label for="descricao" class="mb-1.5 block text-sm font-semibold">Descrição do projeto</label>
+                        <textarea id="descricao" rows="4" x-model="form.descricao" @input="erros.descricao = ''"
+                            placeholder="Conte-nos sobre a solução de software que você precisa..."
+                            class="w-full resize-y rounded-xl border bg-white px-4 py-3 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                            :class="erros.descricao ? 'border-red-400' : 'border-slate-300'"></textarea>
+                        <p x-show="erros.descricao" x-cloak class="mt-1 text-xs text-red-500" x-text="erros.descricao">
+                        </p>
+                    </div>
+                    <div class="flex gap-2 items-end">
+                        <!-- cor -->
+                        <label for="cor"
+                            class="w-fit  block text-sm rounded-md font-semibold bg-blue-500 p-2 text-white">
+                            Selecione a cor da empresa
+                        </label>
+
+                        <input id="cor" type="color" inputmode="color" x-model="form.cor"
+                            @input="form.cor = $event.target.value; erros.cor = ''"
+                            class="hidden w-full rounded-xl border bg-white px-4 py-3 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                            :class="erros.cor ? 'border-red-400' : 'border-slate-300'" />
+                        <p x-show="erros.cor" x-cloak class="mt-1 text-xs text-red-500" x-text="erros.cor"></p>
+                        <div class="mt-2 h-9 w-9 bg-gray-300 rounded-md" :style="{ backgroundColor: form.cor }"></div>
+                    </div>
+                    <div class="grid gap-5 sm:grid-cols-2">
+
+
+                        <button type="submit"
+                            class="w-full rounded-full bg-brand px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand/40">
+                            Enviar solicitação
+                        </button>
+
+                        <p class="text-center text-xs text-slate-400">
+                            Ao enviar, você concorda em ser contatado pela equipe da Nite Jr.
+                        </p>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <footer class="border-t border-slate-200 bg-white">
+        <div class="mx-auto max-w-6xl px-6 py-6 text-center text-sm text-slate-500">
+            &copy; <span x-data x-text="new Date().getFullYear()"></span> Nite Jr · Empresa Júnior de Tecnologia da UFMA
+        </div>
+    </footer>
+
+    <script>
+        function niteForm() {
+            return {
+                enviado: false,
+                form: { nome: '', cnpj: '', telefone: '', email: '', descricao: '', cor: '' },
+                erros: { nome: '', cnpj: '', telefone: '', email: '', descricao: '', cor: '' },
+
+                mascaraCnpj(v) {
+                    return v.replace(/\D/g, '').slice(0, 14)
+                        .replace(/^(\d{2})(\d)/, '$1.$2')
+                        .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+                        .replace(/\.(\d{3})(\d)/, '.$1/$2')
+                        .replace(/(\d{4})(\d)/, '$1-$2');
+                },
+
+                mascaraTelefone(v) {
+                    v = v.replace(/\D/g, '').slice(0, 11);
+                    if (v.length > 6) return v.replace(/^(\d{2})(\d{5})(\d{0,4}).*/, '($1) $2-$3');
+                    if (v.length > 2) return v.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+                    if (v.length > 0) return v.replace(/^(\d{0,2})/, '($1');
+                    return v;
+                },
+
+                validar() {
+                    this.erros = { nome: '', cnpj: '', telefone: '', email: '', descricao: '', cor: '' };
+                    let ok = true;
+                    if (!this.form.nome.trim()) { this.erros.nome = 'Informe o nome.'; ok = false; }
+                    if (this.form.cnpj.replace(/\D/g, '').length !== 14) { this.erros.cnpj = 'CNPJ inválido.'; ok = false; }
+                    return ok;
+                },
+                async enviar() {
+                    if (!this.validar()) return;
+                    await apiRequest('/empresas', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            nome: this.form.nome.trim(),
+                            cnpj: this.form.cnpj.trim()
+                        })
+                    });
+                    this.enviado = true;
+                },
+
+                resetar() {
+                    this.form = { nome: '', cnpj: '', telefone: '', email: '', descricao: '', cor: '' };
+                    this.erros = { nome: '', cnpj: '', telefone: '', email: '', descricao: '', cor: '' };
+                    this.enviado = false;
+                },
+            };
+        }
+    </script>
+</body>
+
+</html>

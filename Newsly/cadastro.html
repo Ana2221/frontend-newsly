@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar Conta | Nexus Júnior</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+ <script src="../script/script.js"></script>
+ <script defer src="../script/cadastro.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>[x-cloak] { display: none !important; }</style>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4 font-sans antialiased text-gray-800">
+
+  <div class="w-full max-w-md bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden p-8"
+       x-data="cadastroController()">
+    
+    <div class="text-center mb-8">
+
+      <h1 class="text-2xl font-black text-gray-950 tracking-tight">Crie a sua conta</h1>
+      <p class="text-sm text-gray-500 mt-1">Inscreva-se para aceder à plataforma da Newsly.</p>
+    </div>
+
+    <form @submit.prevent="submeterCadastro()" class="space-y-4">
+      
+      <div class="space-y-1.5">
+        <label for="nome" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Nome Completo</label>
+        <div class="relative">
+          <input 
+            type="text" 
+            id="nome" 
+            x-model="form.nome" 
+            required 
+            placeholder="Ex: João Silva" 
+            class="w-full px-3.5 py-2 border border-gray-200 bg-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all placeholder-gray-400"
+          />
+        </div>
+      </div>
+
+      <div class="space-y-1.5">
+        <label for="email" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Endereço de Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          x-model="form.email" 
+          required 
+          placeholder="exemplo@ej.com.br" 
+          class="w-full px-3.5 py-2 border border-gray-200 bg-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all placeholder-gray-400"
+        />
+      </div>
+
+      <div class="space-y-1.5">
+        <label for="telefone" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Telefone</label>
+        <input 
+          type="tel" 
+          id="telefone" 
+          x-model="form.telefone" 
+          placeholder="Ex: 11999999999" 
+          class="w-full px-3.5 py-2 border border-gray-200 bg-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all placeholder-gray-400"
+        />
+      </div>
+
+      <div class="space-y-1.5">
+        <label for="cargo" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Tipo de Usuário</label>
+        <select 
+          id="cargo" 
+          x-model="form.tipo" 
+          class="w-full px-3.5 py-2 border border-gray-200 bg-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-700 transition-all cursor-pointer"
+        >
+          <option value="COLABORADOR">Usuário (Membro Comum)</option>
+          <option value="RESPONSAVEL">Empresas Juniores</option>
+          <option value="GESTOR">Gestor</option>
+        </select>
+      </div>
+
+      <div class="space-y-1.5" x-show="form.tipo !== 'GESTOR'">
+        <label for="empresaId" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Empresa ID</label>
+        <input 
+          type="number" 
+          id="empresaId" 
+          x-model="form.empresaId" 
+          min="1" 
+          placeholder="Opcional para associação" 
+          class="w-full px-3.5 py-2 border border-gray-200 bg-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all placeholder-gray-400"
+        />
+      </div>
+
+      <div class="space-y-1.5" x-show="form.tipo === 'COLABORADOR'">
+        <label class="flex items-center gap-2 text-sm font-medium text-gray-700">
+          <input type="checkbox" x-model="form.atividade" class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 cursor-pointer" />
+          Usuário ativo
+        </label>
+      </div>
+
+      <div class="space-y-1.5">
+        <label for="senha" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Palavra-passe / Senha</label>
+        <div class="relative" x-data="{ escondeSenha: true }">
+          <input 
+            :type="escondeSenha ? 'password' : 'text'" 
+            id="senha" 
+            x-model="form.senha" 
+            required 
+            placeholder="No mínimo 6 caracteres" 
+            class="w-full pl-3.5 pr-10 py-2 border border-gray-200 bg-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all placeholder-gray-400"
+          />
+          <button 
+            type="button" 
+            @click="escondeSenha = !escondeSenha" 
+            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer"
+          >
+            <svg x-show="!escondeSenha" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <svg x-show="escondeSenha" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4" x-cloak><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.822 7.822L21 21m-2.228-2.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 pt-1">
+        <input 
+          type="checkbox" 
+          id="termos" 
+          required 
+          class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 cursor-pointer"
+        />
+        <label for="termos" class="text-xs text-gray-500">
+          Aceito os <a href="#" class="text-blue-500 hover:underline font-medium">Termos de Serviço</a> e a <a href="#" class="text-blue-500 hover:underline font-medium">Política de Privacidade</a>.
+        </label>
+      </div>
+
+      <button 
+        type="submit" 
+        class="w-full mt-2 py-2.5 px-4  bg-[#04007C] text-white font-bold text-sm rounded-lg shadow-sm transition-colors cursor-pointer flex items-center justify-center gap-2"
+      >
+        Registar Conta
+      </button>
+    </form>
+
+    <div class="mt-6 pt-6 border-t border-gray-100 text-center">
+      <p class="text-xs text-gray-500">
+        Já possui uma conta? 
+        <a href="login.html" class="text-blue-500 hover:underline font-bold transition-all ml-1">Inicie sessão aqui</a>
+      </p>
+    </div>
+
+  </div>
+
+</body>
+
+</html>

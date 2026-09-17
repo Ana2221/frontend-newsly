@@ -1,0 +1,1312 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empresa Junior - Gestão Integrada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../script/script.js"></script>
+    <script src="../script/carregar.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans antialiased" x-data="userLoad()" x-init="init()">
+    <div x-show="mobileMenuOpen" x-cloak x-transition:enter="transition ease-out duration-150"
+        x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-2" class="md:hidden border-t border-gray-100 bg-white"
+        id="mobile-menu">
+        <div class="px-2 pt-2 pb-4 space-y-1 shadow-inner">
+            <a href="index.html" @click="activeTab = 'home'; mobileMenuOpen = false"
+                :class="activeTab === 'home' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
+                class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
+                Home
+            </a>
+            <a href="empresas.html" @click="activeTab = 'empresas'; mobileMenuOpen = false"
+                :class="activeTab === 'empresas' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
+                class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
+                Empresas
+            </a>
+            <a href="noticias.html" @click="activeTab = 'noticias'; mobileMenuOpen = false"
+                :class="activeTab === 'noticias' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
+                class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
+                Notícias
+            </a>
+            <div class="pt-4 pb-2 border-t border-gray-100 mt-2 px-2">
+                <a href="login.html" @click="activeTab = 'login'; mobileMenuOpen = false"
+                    class="w-full flex items-center justify-center px-4 py-2.5 rounded-xl text-base font-bold text-white bg-slate-950 hover:bg-slate-800 transition shadow-sm">
+                    Acessar a Conta
+                </a>
+            </div>
+        </div>
+    </div>
+    </nav>
+
+    <div class="flex min-h-screen">
+
+        <aside class="bg-white border-r border-gray-200 transition-all duration-300 flex flex-col justify-between"
+            :class="sidebarOpen ? 'w-64' : 'w-20'">
+            <div>
+                <div class="p-4 border-b border-gray-100 flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 bg-[#4f46e5] rounded-full flex-shrink-0 flex flex-col justify-center items-center overflow-hidden p-1">
+                        <div class="w-full h-1/2 bg-white rounded-t-full mb-0.5"></div>
+                        <div class="w-full h-1 bg-white mb-0.5"></div>
+                        <div class="w-full h-0.5 bg-white"></div>
+                    </div>
+                    <div x-show="sidebarOpen" x-transition class="overflow-hidden whitespace-nowrap">
+                        <h1 class="font-bold text-lg text-gray-950 leading-none"><span
+                                x-text="user?.nome || 'Nome do Usuário'"></span></h1>
+                        <span class="text-xs text-gray-500"><span
+                                x-text="user?.empresa?.nome || 'Nome da Empresa'"></span></span>
+                    </div>
+                </div>
+
+                <nav class="p-4 space-y-1">
+                    <button @click="currentTab = 'painel'"
+                        :class="currentTab === 'painel' ? 'bg-[#eef2ff] text-[#4f46e5] font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path
+                                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z">
+                            </path>
+                        </svg>
+                        <span x-show="sidebarOpen">Painel</span>
+                    </button>
+
+                    <button @click="currentTab = 'membros'"
+                        :class="currentTab === 'membros' ? 'bg-[#eef2ff] text-[#4f46e5] font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                            </path>
+                        </svg>
+                        <span x-show="sidebarOpen">Membros</span>
+                    </button>
+
+                    <button @click="currentTab = 'noticias'"
+                        :class="currentTab === 'noticias' ? 'bg-[#eef2ff] text-[#4f46e5] font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path
+                                d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z">
+                            </path>
+                        </svg>
+                        <span x-show="sidebarOpen">Notícias</span>
+                    </button>
+
+                    <button @click="currentTab = 'diretorias'"
+                        :class="currentTab === 'diretorias' ? 'bg-[#eef2ff] text-[#4f46e5] font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                            </path>
+                        </svg>
+                        <span x-show="sidebarOpen">Diretorias</span>
+                    </button>
+
+                    <button @click="currentTab = 'historico'"
+                        :class="currentTab === 'historico' ? 'bg-[#eef2ff] text-[#4f46e5] font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span x-show="sidebarOpen">Configurações</span>
+                    </button>
+                </nav>
+            </div>
+
+            <div class="p-4 border-t border-gray-100 space-y-2">
+                <button @click="sidebarOpen = !sidebarOpen"
+                    class="w-full flex items-center gap-3 px-3 py-2 text-gray-500 hover:bg-gray-50 rounded-lg text-sm transition-colors">
+                    <svg class="w-5 h-5 transition-transform duration-300" :class="!sidebarOpen && 'rotate-180'"
+                        fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+                    </svg>
+                    <span x-show="sidebarOpen">Recolher</span>
+                </button>
+                <button
+                    class="w-full flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg text-sm transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                        </path>
+                    </svg>
+                    <span x-show="sidebarOpen">Sair</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-8 bg-gray-50 max-w-7xl mx-auto w-full">
+
+            <div x-show="currentTab === 'painel'" x-cloak>
+                <div class="mb-6">
+                    <span class="text-xs font-semibold text-gray-400 tracking-wider uppercase">Visão Geral</span>
+                    <h2 class="text-2xl font-bold text-gray-900">Painel da EJ</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <div class="text-sm font-medium text-gray-500 mb-1">Total de Membros</div>
+                        <div class="text-3xl font-bold text-gray-900 mb-2"><span
+                                x-text="user?.empresa?.colaboradores?.length || 0"></span></div>
+                        <button @click="currentTab = 'membros'"
+                            class="text-xs font-medium text-[#4f46e5] hover:underline flex items-center gap-1">Ver
+                            detalhes &rarr;</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <div class="text-sm font-medium text-gray-500 mb-1">Diretorias Ativas</div>
+                        <div class="text-3xl font-bold text-gray-900 mb-2"><span
+                                x-text="user?.empresa?.diretorias?.length || 0"></span></div>
+                        <button @click="currentTab = 'diretorias'"
+                            class="text-xs font-medium text-[#4f46e5] hover:underline flex items-center gap-1">Ver
+                            detalhes &rarr;</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <div class="text-sm font-medium text-gray-500 mb-1">Notícias Publicadas</div>
+                        <div class="text-3xl font-bold text-gray-900 mb-2"><span
+                                x-text="user?.empresa?.noticias?.length || 0"></span></div>
+                        <button @click="currentTab = 'noticias'"
+                            class="text-xs font-medium text-[#4f46e5] hover:underline flex items-center gap-1">Ver
+                            detalhes &rarr;</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-bold text-lg text-gray-900">Últimas Notícias</h3>
+                            <button @click="currentTab = 'noticias'"
+                                class="text-sm font-medium text-[#4f46e5] hover:underline">Ver todas &rarr;</button>
+                        </div>
+
+                        <template x-for="noticia in (user?.empresa?.noticias || []).slice(0, 3)" :key="noticia.id">
+                            <div
+                                class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                                <div class="flex justify-between text-xs text-gray-400 font-semibold uppercase mb-1">
+                                    <span x-text="noticia.categoria"></span><span x-text="noticia.data"></span>
+                                </div>
+                                <h4 class="font-bold text-base text-gray-900 mb-1" x-text="noticia.titulo"></h4>
+                                <p class="text-sm text-gray-500" x-text="noticia.descricao"></p>
+                            </div>
+                        </template>
+
+                        <div x-show="(user?.empresa?.noticias || []).length === 0"
+                            class="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center">
+                            <svg class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor"
+                                stroke-width="1.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .984.695 1.823 1.607 1.957m-5.208 0A2.25 2.25 0 005.064 6.235m10.332 0a2.25 2.25 0 00-3.182-.696m0 0A2.25 2.25 0 0015 12.75m0 0A2.25 2.25 0 0112.75 15" />
+                            </svg>
+                            <p class="text-gray-600 font-medium">Não há notícias por enquanto</p>
+                            <p class="text-gray-500 text-sm mt-1">Volte mais tarde para acompanhar as novidades!</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-bold text-lg text-gray-900">Diretorias em Destaque</h3>
+                            <button @click="currentTab = 'diretorias'"
+                                class="text-sm font-medium text-[#4f46e5] hover:underline">Ver todas</button>
+                        </div>
+
+                        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+                            <h4 class="font-bold text-gray-900 text-sm">Diretoria de Projetos</h4>
+                            <p class="text-xs text-gray-500 mt-1 mb-3">Responsável pela gestão e execução dos projetos
+                                de...</p>
+                            <span class="text-xs font-medium text-gray-400 bg-gray-100 px-2 py-1 rounded-full">3
+                                integrantes</span>
+                        </div>
+
+                        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+                            <h4 class="font-bold text-gray-900 text-sm">Diretoria de Marketing</h4>
+                            <p class="text-xs text-gray-500 mt-1 mb-3">Comunicação, branding e estratégias de divulgação
+                            </p>
+                            <span class="text-xs font-medium text-gray-400 bg-gray-100 px-2 py-1 rounded-full">2
+                                integrantes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div x-show="currentTab === 'membros'" x-cloak x-init="carregarColaboradores()" x-data="{
+                search: '',
+                filterRole: 'Todos',
+                showForm: false,
+                novoMembro: '',
+                membrosAdicionados: [],
+                opcoesMembros: [],
+                colaboradoresTabela: [],
+                normalizarColaborador(colaborador) {
+                    return {
+                        id: colaborador?.id ?? null,
+                        nome: colaborador?.nome || colaborador?.name || '',
+                        email: colaborador?.contato.email || '',
+                        cargo: colaborador?.cargo || 'Membro',
+                        status: colaborador?.status || 'Pendente'
+                    };
+                },
+                getStatusClass(status) {
+                    const map = {
+                        'Aceito': 'bg-green-50 text-green-700',
+                        'Pendente': 'bg-yellow-50 text-yellow-700',
+                        'Expirado': 'bg-red-50 text-red-700',
+                        'Rejeitado': 'bg-gray-100 text-gray-700'
+                    };
+                    return map[status] || 'bg-gray-100 text-gray-700';
+                },
+                async carregarColaboradores() {
+                    try {
+                        const data = await apiRequest('/colaboradores');
+                        const colaboradores = Array.isArray(data)
+                            ? data.map(item => this.normalizarColaborador(item)).filter(item => item.nome || item.email)
+                            : [];
+
+                        console.log('Colaboradores carregados:', colaboradores);
+                        this.colaboradoresTabela = colaboradores;
+                        this.opcoesMembros = colaboradores;
+                    } catch (error) {
+                        console.error('Falha ao carregar colaboradores:', error);
+                        this.colaboradoresTabela = [];
+                        this.opcoesMembros = [];
+                    }
+                },
+                async enviarColaboradores() {
+                    if (!this.membrosAdicionados.length) return;
+                    console.log('Colaboradores que serão enviados:', this.membrosAdicionados);
+                    for(const membro of this.membrosAdicionados) {
+                        const empresaid = JSON.parse(localStorage.getItem('user')).empresaId;
+                        try {
+                            const data = await apiRequest('/empresas/adicionar-membro/' + membro.id + '/' + empresaid, {
+                                method: 'PATCH'
+                            });
+                            if (Array.isArray(data)) {
+                                this.membrosAdicionados = data.map(item => this.normalizarColaborador(item));
+                            } else if (data && Array.isArray(data.colaboradores)) {
+                                this.membrosAdicionados = data.colaboradores.map(item => this.normalizarColaborador(item));
+                            }
+
+                        this.showForm = false;
+                    } catch (error) {
+                        console.error('Falha ao enviar colaboradores:', error);
+                    }
+                        
+                    }
+                
+                },
+                buscaPorEmailOuNome(value) {
+                    const termo = (value || '').trim().toLowerCase();
+                    if (!termo) return true;
+
+                    return this.opcoesMembros.some(colaborador => {
+                        const nome = (colaborador.nome || '').toLowerCase();
+                        const email = (colaborador.email || '').toLowerCase();
+                        return nome.includes(termo) || email.includes(termo);
+                    });
+                },
+                adicionarMembro() {
+                    const valor = this.novoMembro.trim();
+                    if (!valor) return;
+
+                    const termo = valor.toLowerCase();
+                    const colaboradorEncontrado = this.opcoesMembros.find(colaborador => {
+                        const nome = (colaborador.nome || '').toLowerCase();
+                        const email = (colaborador.email || '').toLowerCase();
+                        return nome === termo || email === termo || nome.includes(termo) || email.includes(termo);
+                    });
+
+                    const novoColaborador = colaboradorEncontrado
+                        ? { ...colaboradorEncontrado }
+                        : {
+                            id: null,
+                            nome: valor,
+                            email: '',
+                            cargo: 'Membro',
+                            status: 'Pendente'
+                        };
+
+                    const jaExiste = this.membrosAdicionados.some(item => {
+                        const nomeIgual = (item.nome || '').toLowerCase() === (novoColaborador.nome || '').toLowerCase();
+                        const emailIgual = (item.email || '').toLowerCase() === (novoColaborador.email || '').toLowerCase();
+                        return nomeIgual || emailIgual;
+                    });
+
+                    if (!jaExiste) {
+                        this.membrosAdicionados.push(novoColaborador);
+                    }
+
+                    this.novoMembro = '';
+                    console.log('Membros adicionados:', this.membrosAdicionados);
+                },
+                removerMembro(index) {
+                    this.membrosAdicionados.splice(index, 1);
+                },
+                searchMatches(colaborador) {
+                    const termo = (this.search || '').trim().toLowerCase();
+                    if (!termo) return true;
+                    const nome = (colaborador?.nome || '').toLowerCase();
+                    const email = (colaborador?.email || '').toLowerCase();
+                    return nome.includes(termo) || email.includes(termo);
+                }
+            }">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <span class="text-xs font-semibold text-gray-400 tracking-wider uppercase">Gestão de
+                            Pessoas</span>
+                        <h2 class="text-2xl font-bold text-gray-900">Membros</h2>
+                    </div>
+                    <button @click="showForm = !showForm"
+                        class="bg-[#4f46e5] hover:bg-[#1e293b] text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Adicionar Membro
+                    </button>
+                </div>
+
+                <div x-show="showForm" x-cloak class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-gray-900">Adicionar novo membro</h3>
+                        <button type="button" @click="showForm = false"
+                            class="text-sm text-gray-500 hover:text-gray-700">Fechar</button>
+                    </div>
+
+                    <form @submit.prevent="adicionarMembro()" class="space-y-4">
+                        <div>
+                            <label for="membroSelect" class="block text-sm font-medium text-gray-700 mb-1">Nome ou
+                                e-mail do membro</label>
+                            <input id="membroSelect" list="lista-membros" x-model="novoMembro" type="text"
+                                placeholder="Digite ou selecione nome ou e-mail"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                            <datalist id="lista-membros">
+                                <template x-for="colaborador in opcoesMembros"
+                                    :key="colaborador.email || colaborador.nome">
+                                    <option :value="colaborador.email || colaborador.nome"
+                                        :label="(colaborador.nome || 'Colaborador') + ' - ' + (colaborador.email || 'Sem e-mail')">
+                                    </option>
+                                </template>
+                            </datalist>
+                        </div>
+
+                        <div class="flex justify-end gap-3">
+                            <button type="button" @click="showForm = false"
+                                class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-colors">
+                                Cancelar
+                            </button>
+                            <button type="submit"
+                                class="bg-[#4f46e5] hover:bg-[#1e293b] text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-colors">
+                                Salvar membro
+                            </button>
+                            <button type="button" @click="enviarColaboradores()"
+                                class="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-colors">
+                                Enviar
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mt-5">
+                        <p class="text-xs font-semibold uppercase text-gray-500 mb-3">Lista de membros</p>
+                        <div class="flex flex-wrap gap-2">
+                            <template x-for="(membro, index) in membrosAdicionados"
+                                :key="(membro.email || membro.nome) + '-' + index">
+                                <span
+                                    class="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-sm font-medium">
+                                    <span x-text="membro.nome || membro.contato.email || 'Colaborador'"></span>
+                                    <button type="button" @click="removerMembro(index)"
+                                        class="text-indigo-600 hover:text-indigo-900">×</button>
+                                </span>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                        <template
+                            x-for="role in ['Todos', 'Presidente', 'Vice-presidente', 'Diretor', 'Assessor', 'Trainee']">
+                            <button @click="filterRole = role"
+                                :class="filterRole === role ? 'bg-[#4f46e5] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+                                class="text-xs font-medium px-3 py-1.5 rounded-full transition-colors" x-text="role">
+                            </button>
+                        </template>
+                    </div>
+                    <div class="w-full md:w-72 relative">
+                        <input type="text" x-model="search" placeholder="Buscar membros..."
+                            class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3" fill="none" stroke="currentColor"
+                            stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <table class="w-full border-collapse text-left">
+                        <thead>
+                            <tr
+                                class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase">
+                                <th class="p-4">Nome</th>
+                                <th class="p-4">Cargo</th>
+                                <th class="p-4">E-mail</th>
+                                <th class="p-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 text-sm">
+                            <template x-for="colaborador in colaboradoresTabela.filter(item => searchMatches(item) && (filterRole === 'Todos' || item.cargo === filterRole))" :key="colaborador.id || colaborador.email || colaborador.nome">
+                                <tr class="hover:bg-gray-50/70">
+                                    <td class="p-4 flex items-center gap-3">
+                                        <div
+                                            class="w-9 h-9 bg-indigo-100 text-indigo-700 font-bold rounded-full flex items-center justify-center"
+                                            x-text="(colaborador.nome || 'C').charAt(0).toUpperCase()">
+                                        </div>
+                                        <span class="font-medium text-gray-900" x-text="colaborador.nome || 'Colaborador'"></span>
+                                    </td>
+                                    <td class="p-4 text-gray-600" x-text="colaborador.cargo || 'Membro'"></td>
+                                    <td class="p-4 text-gray-500" x-text="colaborador.email || 'Sem e-mail'"></td>
+                                    <td class="p-4">
+                                        <span
+                                            class="px-2.5 py-1 rounded-full text-xs font-medium"
+                                            :class="getStatusClass(colaborador.status || 'Pendente')"
+                                            x-text="colaborador.status || 'Pendente'">
+                                        </span>
+                                    </td>
+                                </tr>
+                            </template>
+
+                            <tr x-show="colaboradoresTabela.filter(item => searchMatches(item) && (filterRole === 'Todos' || item.cargo === filterRole)).length === 0">
+                                <td colspan="4" class="p-8 text-center text-sm text-gray-500">
+                                    Nenhum colaborador encontrado.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div x-show="currentTab === 'noticias'" x-cloak x-data="{ 
+                activeFilter: 'Todas', 
+                selectedNews: null,
+                getCoreColor(categoria) {
+                    const colors = {
+                        'Institucional': { bg: 'bg-purple-50', text: 'text-purple-600' },
+                        'Capacitação': { bg: 'bg-[#eef2ff]', text: 'text-[#4f46e5]' },
+                        'Projeto': { bg: 'bg-blue-50', text: 'text-blue-600' },
+                        'Resultado': { bg: 'bg-green-50', text: 'text-green-600' },
+                        'Evento': { bg: 'bg-pink-50', text: 'text-pink-600' },
+                        'Outro': { bg: 'bg-gray-50', text: 'text-gray-600' }
+                    };
+                    return colors[categoria] || colors['Outro'];
+                }
+            }">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <span class="text-xs font-semibold text-gray-400 tracking-wider uppercase">Sala de
+                            Imprensa</span>
+                        <h2 class="text-2xl font-bold text-gray-900">Últimas Notícias</h2>
+                    </div>
+                    <!-- <button class="bg-[#4f46e5] hover:bg-[#1e293b] text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+                        Nova Notícia
+                    </button> -->
+
+                </div>
+
+                <div x-data="{ sidebarAberta: false }">
+                    <div class="w-100 flex justify-end">
+                        <button @click="sidebarAberta = true"
+                            class="px-5 py-2.5 bg-[#4f46e5] hover:bg-[#1e293b] text-white font-medium rounded-lg shadow-sm transition-colors flex items-center gap-2 cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            Nova Notícia
+                        </button>
+                    </div>
+
+                    <div x-show="sidebarAberta" x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0" x-cloak class="fixed inset-0 z-50 overflow-hidden"
+                        role="dialog" aria-modal="true">
+                        <div @click="sidebarAberta = false" class="absolute inset-0 bg-black/40 transition-opacity">
+                        </div>
+
+                        <div class="absolute inset-y-0 right-0 pl-10 max-w-full flex">
+                            <div x-show="sidebarAberta" x-trap.noscroll="sidebarAberta"
+                                x-transition:enter="transform transition ease-out duration-300 sm:duration-300"
+                                x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+                                x-transition:leave="transform transition ease-in duration-200"
+                                x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
+                                class="w-screen max-w-lg bg-white shadow-2xl flex flex-col h-full" x-data="{
+            form: {
+              titulo: '',
+              descricao: '',
+              autor: '',
+              categoria: 'Institucional',
+              data: new Date().toISOString().split('T')[0],
+              conteudo: ''
+            },
+            submeterFormulario() {
+              // Aqui processa os dados (ex: enviar para uma API)
+              console.log('Notícia Criada com Sucesso:', this.form);
+              alert('Notícia publicada com sucesso!');
+              
+              // Reset do formulário
+              this.form.titulo = '';
+              this.form.descricao = '';
+              this.form.autor = '';
+              this.form.categoria = 'Institucional';
+              this.form.data = new Date().toISOString().split('T')[0];
+              this.form.conteudo = '';
+              
+              // Fechar Sidebar
+              sidebarAberta = false;
+            }
+          }">
+                                <div
+                                    class="px-6 py-5 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+                                    <div>
+                                        <h2 class="text-xl font-bold text-gray-900">Nova Notícia</h2>
+                                        <p class="text-sm text-gray-500 mt-1">Preencha os campos para publicar na Sala
+                                            de
+                                            Imprensa.</p>
+                                    </div>
+                                    <button @click="sidebarAberta = false"
+                                        class="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-200 transition-colors cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M6 18 18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <form @submit.prevent="criarNoticia(form)" class="flex-1 overflow-y-auto p-6 space-y-5">
+
+                                    <div class="space-y-1.5">
+                                        <label for="titulo" class="block text-sm font-semibold text-gray-700">
+                                            Título <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="text" id="titulo" x-model="form.titulo" required
+                                            placeholder="Ex: Processo Seletivo 2025.1 está aberto!"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm transition-all">
+                                    </div>
+
+                                    <div class="space-y-1.5">
+                                        <label for="descricao" class="block text-sm font-semibold text-gray-700">
+                                            Descrição Curta <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="text" id="descricao" x-model="form.descricao" required
+                                            placeholder="Ex: Inscrições abertas até 15 de março"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm transition-all">
+                                    </div>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                                        <div class="space-y-1.5">
+                                            <label for="autor" class="block text-sm font-semibold text-gray-700">
+                                                Autor <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="text" id="autor" x-model="form.autor" required
+                                                placeholder="Nome do responsável"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm transition-all">
+                                        </div>
+
+                                        <div class="space-y-1.5">
+                                            <label for="data" class="block text-sm font-semibold text-gray-700">
+                                                Data de Publicação <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="date" id="data" x-model="form.data" required
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm transition-all text-gray-700 bg-white">
+                                        </div>
+
+                                    </div>
+
+                                    <div class="space-y-1.5">
+                                        <label for="categoria"
+                                            class="block text-sm font-semibold text-gray-700">Categoria</label>
+                                        <select id="categoria" x-model="form.categoria"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm bg-white text-gray-700 transition-all">
+                                            <option value="Institucional">Institucional</option>
+                                            <option value="Projeto">Projeto</option>
+                                            <option value="Capacitação">Capacitação</option>
+                                            <option value="Evento">Evento</option>
+                                            <option value="Resultado">Resultado</option>
+                                            <option value="Outro">Outro</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="space-y-1.5">
+                                        <label for="conteudo" class="block text-sm font-semibold text-gray-700">
+                                            Corpo da Notícia <span class="text-red-500">*</span>
+                                        </label>
+                                        <textarea id="conteudo" x-model="form.conteudo" required rows="6"
+                                            placeholder="Digite o conteúdo detalhado ou artigo completo da notícia..."
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm resize-none transition-all"></textarea>
+                                    </div>
+
+                                    <div
+                                        class="pt-4 border-t border-gray-200 flex items-center justify-end gap-3 bg-white sticky bottom-0 left-0 right-0">
+                                        <button type="button" @click="sidebarAberta = false"
+                                            class="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer transition-colors">
+                                            Cancelar
+                                        </button>
+                                        <button type="submit"
+                                            class="px-5 py-2 bg-[#4f46e5] hover:bg-[#1e293b] text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer transition-colors">
+                                            Publicar Notícia
+                                        </button>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <template
+                        x-for="cat in ['Todas', 'Evento', 'Projeto', 'Institucional', 'Capacitação', 'Resultado', 'Outro']">
+                        <button @click="activeFilter = cat"
+                            :class="activeFilter === cat ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'"
+                            class="text-xs font-medium px-4 py-2 rounded-lg shadow-sm transition-colors" x-text="cat">
+                        </button>
+                    </template>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <template
+                        x-for="noticia in (user?.empresa?.noticias || []).filter(n => activeFilter === 'Todas' || n.categoria === activeFilter)"
+                        :key="noticia.id">
+                        <div
+                            class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm flex flex-col justify-between">
+                            <div class="p-6">
+                                <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider mb-2"
+                                    :class="getCoreColor(noticia.categoria).text">
+                                    <span class="px-2 py-0.5 rounded" :class="getCoreColor(noticia.categoria).bg"
+                                        x-text="noticia.categoria"></span>
+                                    <span class="text-gray-400" x-text="noticia.data"></span>
+                                </div>
+                                <h3 class="font-bold text-lg text-gray-900 mb-2" x-text="noticia.titulo"></h3>
+                                <p class="text-sm text-gray-600" x-text="noticia.descricao"></p>
+                            </div>
+                            <div
+                                class="bg-gray-50 px-6 py-3 border-t border-gray-100 flex justify-between items-center text-xs">
+                                <span class="text-gray-500" x-text="'Por: ' + noticia.autor"></span>
+                                <button @click="selectedNews = noticia"
+                                    class="text-[#4f46e5] font-medium hover:underline">Ler notícia completa
+                                    &rarr;</button>
+                            </div>
+                        </div>
+                    </template>
+
+                    <div x-show="(user?.empresa?.noticias || []).filter(n => activeFilter === 'Todas' || n.categoria === activeFilter).length === 0"
+                        class="col-span-1 md:col-span-2 bg-gray-50 border border-gray-200 rounded-xl p-12 text-center">
+                        <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor"
+                            stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .984.695 1.823 1.607 1.957m-5.208 0A2.25 2.25 0 005.064 6.235m10.332 0a2.25 2.25 0 00-3.182-.696m0 0A2.25 2.25 0 0015 12.75m0 0A2.25 2.25 0 0112.75 15" />
+                        </svg>
+                        <p class="text-gray-700 font-semibold text-lg">Não há notícias por enquanto</p>
+                        <p class="text-gray-500 text-sm mt-2">Nenhuma notícia encontrada nesta categoria. Tente outra!
+                        </p>
+                    </div>
+                </div>
+
+                <div x-show="selectedNews"
+                    class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-fade-in" x-cloak>
+                    <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                        @click.away="selectedNews = null">
+                        <div class="p-6 border-b border-gray-100 flex justify-between items-start">
+                            <div>
+                                <span class="px-2 py-0.5 rounded text-xs font-semibold uppercase"
+                                    :class="getCoreColor(selectedNews.categoria).bg + ' ' + getCoreColor(selectedNews.categoria).text"
+                                    x-text="selectedNews.categoria"></span>
+                                <h3 class="text-xl font-bold text-gray-900 mt-2" x-text="selectedNews.titulo"></h3>
+                                <p class="text-xs text-gray-400 mt-1"
+                                    x-text="'Por ' + selectedNews.autor + ' • ' + selectedNews.data"></p>
+                            </div>
+                            <button @click="selectedNews = null" class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <p class="text-base font-medium text-gray-800" x-text="selectedNews.descricao"></p>
+                            <p class="text-sm text-gray-600 leading-relaxed" x-text="selectedNews.conteudo"></p>
+                        </div>
+                        <div class="p-4 bg-gray-50 border-t border-gray-100 flex justify-end">
+                            <button @click="selectedNews = null"
+                                class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium text-sm px-4 py-2 rounded-lg">Fechar</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div x-show="currentTab === 'diretorias'" x-cloak x-data="{
+                editingDir: null,
+                openCreateDir: false,
+                opcoesColaboradores: [],
+                formDir: {
+                    nome: '',
+                    descricao: '',
+                    diretorResponsavel: '',
+                    ano: new Date().getFullYear().toString(),
+                    status: 'Ativa',
+                    diretores: []
+                },
+                diretorTemp: {
+                    id: null,
+                    colaboradorId: null,
+                    colaboradorNome: '',
+                    funcao: null,
+                    permissoes: []
+                },
+                funcoes: ['Presidente', 'Vice-presidente', 'Diretor', 'Assessor', 'Trainee'],
+                async carregarColaboradores() {
+                    try {
+                        const data = await apiRequest('/colaboradores');
+                        const colaboradores = Array.isArray(data)
+                            ? data.map(colaborador => ({
+                                id: colaborador?.id ?? null,
+                                nome: colaborador?.nome || colaborador?.name || '',
+                                email: colaborador?.email || '',
+                                cargo: colaborador?.cargo || 'Membro',
+                                status: colaborador?.status || 'Pendente'
+                            })).filter(item => item.nome || item.email)
+                            : [];
+
+                        this.opcoesColaboradores = colaboradores;
+                    } catch (error) {
+                        console.error('Falha ao carregar colaboradores para diretoria:', error);
+                        this.opcoesColaboradores = [];
+                    }
+                },
+                adicionarDiretor() {
+                    const valor = (this.diretorTemp.colaboradorNome || '').trim();
+                    if (!valor) return;
+
+                    const termo = valor.toLowerCase();
+                    const colaboradorEncontrado = this.opcoesColaboradores.find(colaborador => {
+                        const nome = (colaborador.nome || '').toLowerCase();
+                        const email = (colaborador.email || '').toLowerCase();
+                        return nome === termo || email === termo || nome.includes(termo) || email.includes(termo);
+                    });
+
+                    const membro = colaboradorEncontrado
+                        ? { ...colaboradorEncontrado }
+                        : {
+                            id: null,
+                            nome: valor,
+                            email: '',
+                            cargo: 'Membro',
+                            status: 'Pendente'
+                        };
+
+                    const permissoes = Array.isArray(this.diretorTemp.permissoes)
+                        ? this.diretorTemp.permissoes
+                        : (this.diretorTemp.permissoes || '')
+                            .split(',')
+                            .map(item => item.trim())
+                            .filter(Boolean);
+
+                    const jaExiste = this.formDir.diretores.some(item => {
+                        const nomeItem = (item.nome || '').toLowerCase();
+                        const nomeMembro = (membro.nome || '').toLowerCase();
+                        return nomeItem === nomeMembro;
+                    });
+
+                    if (!jaExiste) {
+                        this.formDir.diretores.push({
+                            id: membro.id,
+                            nome: membro.nome,
+                            email: membro.email,
+                            cargo: membro.cargo,
+                            funcao: this.diretorTemp.funcao || 'Membro',
+                            permissoes
+                        });
+                    }
+
+                    this.diretorTemp = {
+                        id: null,
+                        colaboradorId: null,
+                        colaboradorNome: '',
+                        funcao: null,
+                        permissoes: []
+                    };
+                },
+                removerDiretor(index) {
+                    this.formDir.diretores.splice(index, 1);
+                },
+                submeterFormulario() {
+                    if (this.formDir.nome.trim() === '' || this.formDir.diretorResponsavel.trim() === '') {
+                        alert('Preencha todos os campos obrigatórios!');
+                        return;
+                    }
+
+                    console.log('Diretoria criada:', this.formDir);
+                    alert('Diretoria criada com sucesso!');
+
+                    this.formDir = {
+                        nome: '',
+                        descricao: '',
+                        diretorResponsavel: '',
+                        ano: new Date().getFullYear().toString(),
+                        status: 'Ativa',
+                        diretores: []
+                    };
+                    this.diretorTemp = {
+                        id: null,
+                        colaboradorId: null,
+                        colaboradorNome: '',
+                        funcao: null,
+                        permissoes: []
+                    };
+                    this.openCreateDir = false;
+                }
+            }" x-init="carregarColaboradores()">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <span class="text-xs font-semibold text-gray-400 tracking-wider uppercase">Estrutura
+                            Organizacional</span>
+                        <h2 class="text-2xl font-bold text-gray-900">Diretorias Ativas desta Gestão</h2>
+                    </div>
+                    <button @click="openCreateDir = true"
+                        class="bg-[#4f46e5] hover:bg-[#1e293b] text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Nova Diretoria
+                    </button>
+                </div>
+
+                <!-- Modal: Criar Nova Diretoria -->
+                <div x-show="openCreateDir" x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                    x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0" x-cloak class="fixed inset-0 z-50 overflow-hidden">
+                    <div @click="openCreateDir = false" class="absolute inset-0 bg-black/40 transition-opacity"></div>
+
+                    <div class="absolute inset-y-0 right-0 pl-10 max-w-full flex">
+                        <div x-show="openCreateDir" x-trap.noscroll="openCreateDir"
+                            x-transition:enter="transform transition ease-out duration-300 sm:duration-300"
+                            x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+                            x-transition:leave="transform transition ease-in duration-200"
+                            x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
+                            class="w-screen max-w-2xl bg-white shadow-2xl flex flex-col h-full">
+                            <div
+                                class="px-6 py-5 bg-gray-50 border-b border-gray-200 flex items-center justify-between sticky top-0">
+                                <div>
+                                    <h2 class="text-xl font-bold text-gray-900">Nova Diretoria</h2>
+                                    <p class="text-sm text-gray-500 mt-1">Preencha os dados para criar uma nova
+                                        diretoria.</p>
+                                </div>
+                                <button @click="openCreateDir = false"
+                                    class="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-200 transition-colors cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <form @submit.prevent="submeterFormulario()" class="flex-1 overflow-y-auto p-6 space-y-5">
+
+                                <!-- Informações Básicas -->
+                                <div class="space-y-4 pb-4 border-b border-gray-200">
+                                    <h3 class="font-semibold text-gray-900">Informações Básicas</h3>
+
+                                    <div class="space-y-1.5">
+                                        <label for="nomeDiretoria" class="block text-sm font-semibold text-gray-700">
+                                            Nome da Diretoria <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="text" id="nomeDiretoria" x-model="formDir.nome" required
+                                            placeholder="Ex: Diretoria de Projetos"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm transition-all">
+                                    </div>
+
+                                    <div class="space-y-1.5">
+                                        <label for="descricaoDiretoria"
+                                            class="block text-sm font-semibold text-gray-700">
+                                            Descrição
+                                        </label>
+                                        <textarea id="descricaoDiretoria" x-model="formDir.descricao" rows="3"
+                                            placeholder="Ex: Responsável pela gestão e execução dos projetos..."
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm transition-all resize-none"></textarea>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div class="space-y-1.5">
+                                            <label for="ano" class="block text-sm font-semibold text-gray-700">
+                                                Ano
+                                            </label>
+                                            <input type="text" id="ano" x-model="formDir.ano"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm transition-all">
+                                        </div>
+
+                                        <div class="space-y-1.5">
+                                            <label for="status" class="block text-sm font-semibold text-gray-700">
+                                                Status
+                                            </label>
+                                            <select id="status" x-model="formDir.status"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm bg-white text-gray-700 transition-all">
+                                                <option value="Ativa">Ativa</option>
+                                                <option value="Encerrada">Encerrada</option>
+                                                <option value="Pausada">Pausada</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Diretor Responsável -->
+                                <div class="space-y-4 pb-4 border-b border-gray-200">
+                                    <h3 class="font-semibold text-gray-900">Diretor Responsável</h3>
+
+                                    <div class="space-y-1.5">
+                                        <label for="diretorResp" class="block text-sm font-semibold text-gray-700">
+                                            Selecione o Diretor <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="text" id="diretorResp" list="lista-colaboradores-diretoria" x-model="formDir.diretorResponsavel"
+                                            required placeholder="Ex: Maria Silva"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm transition-all">
+                                        <datalist id="lista-colaboradores-diretoria">
+                                            <template x-for="colaborador in opcoesColaboradores" :key="colaborador.id || colaborador.email || colaborador.nome">
+                                                <option :value="colaborador.nome" :label="(colaborador.nome || 'Colaborador') + ' - ' + (colaborador.email || 'Sem e-mail')"></option>
+                                            </template>
+                                        </datalist>
+                                    </div>
+                                </div>
+
+                                <!-- Adicionar Diretores/Membros -->
+                                <div class="space-y-4 pb-4 border-b border-gray-200">
+                                    <h3 class="font-semibold text-gray-900">Adicionar Membros</h3>
+
+                                    <div class="space-y-1.5">
+                                        <label for="nomeMembro" class="block text-sm font-semibold text-gray-700">
+                                            Nome do Colaborador
+                                        </label>
+                                        <input type="text" id="nomeMembro" list="lista-membros-diretoria" x-model="diretorTemp.colaboradorNome"
+                                            placeholder="Ex: João Santos"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm transition-all">
+                                        <datalist id="lista-membros-diretoria">
+                                            <template x-for="colaborador in opcoesColaboradores" :key="colaborador.id || colaborador.email || colaborador.nome">
+                                                <option :value="colaborador.nome" :label="(colaborador.nome || 'Colaborador') + ' - ' + (colaborador.email || 'Sem e-mail')"></option>
+                                            </template>
+                                        </datalist>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div class="space-y-1.5">
+                                            <label for="funcaoMembro" class="block text-sm font-semibold text-gray-700">
+                                                Função
+                                            </label>
+                                            <select id="funcaoMembro" x-model="diretorTemp.funcao"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm bg-white text-gray-700 transition-all">
+                                                <option value="">Selecione uma função</option>
+                                                <template x-for="funcao in funcoes">
+                                                    <option :value="funcao" x-text="funcao"></option>
+                                                </template>
+                                            </select>
+                                        </div>
+
+                                        <div class="space-y-1.5">
+                                            <label for="permissoes" class="block text-sm font-semibold text-gray-700">
+                                                Permissões
+                                            </label>
+                                            <input type="text" id="permissoes" x-model="diretorTemp.permissoes"
+                                                placeholder="Ex: editar, criar, deletar"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm transition-all">
+                                        </div>
+                                    </div>
+
+                                    <button type="button" @click="adicionarDiretor()"
+                                        class="w-full px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-medium rounded-lg transition-colors border border-blue-200">
+                                        + Adicionar Membro
+                                    </button>
+                                </div>
+
+                                <!-- Lista de Membros Adicionados -->
+                                <div x-show="formDir.diretores.length > 0" class="space-y-3">
+                                    <h3 class="font-semibold text-gray-900">Membros Adicionados</h3>
+                                    <div class="space-y-2">
+                                        <template x-for="(diretor, index) in formDir.diretores" :key="index">
+                                            <div
+                                                class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-start">
+                                                <div class="flex-1">
+                                                    <p class="font-medium text-gray-900 text-sm"
+                                                        x-text="diretor.nome || diretor.colaboradorNome"></p>
+                                                    <p class="text-xs text-gray-600"
+                                                        x-text="'Função: ' + (diretor.funcao || 'Não definida')"></p>
+                                                    <p class="text-xs text-gray-500"
+                                                        x-show="diretor.email"
+                                                        x-text="diretor.email"></p>
+                                                </div>
+                                                <button type="button" @click="removerDiretor(index)"
+                                                    class="text-red-600 hover:text-red-700 text-sm font-medium">
+                                                    Remover
+                                                </button>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="pt-4 border-t border-gray-200 flex items-center justify-end gap-3 bg-white sticky bottom-0 left-0 right-0">
+                                    <button type="button" @click="openCreateDir = false"
+                                        class="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer transition-colors">
+                                        Cancelar
+                                    </button>
+                                    <button type="submit"
+                                        class="px-5 py-2 bg-[#4f46e5] hover:bg-[#1e293b] text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer transition-colors">
+                                        Criar Diretoria
+                                    </button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                    <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-lg text-gray-900">Diretoria de Projetos</h3>
+                                <span
+                                    class="bg-[#eef2ff] text-[#4f46e5] text-xs px-2 py-0.5 rounded font-semibold">2025</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mb-4">Responsável pela gestão e execução dos projetos de
+                                consultoria.</p>
+                            <div class="text-xs text-gray-600 space-y-1 mb-4">
+                                <div><strong>Diretor:</strong> Mariana Oliveira</div>
+                                <div><strong>Integrantes:</strong> Gabriel Ferreira, Lucas Mendes, Ana Paula</div>
+                            </div>
+                        </div>
+                        <div class="pt-4 border-t border-gray-100 flex justify-between items-center">
+                            <span class="text-xs text-gray-400">3 integrantes</span>
+                            <button @click="editingDir = 'projetos'"
+                                class="text-xs font-semibold text-[#4f46e5] hover:underline">Editar Diretoria</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-lg text-gray-900">Diretoria de Marketing</h3>
+                                <span
+                                    class="bg-[#eef2ff] text-[#4f46e5] text-xs px-2 py-0.5 rounded font-semibold">2025</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mb-4">Comunicação, branding e estratégias de divulgação
+                                institucional.</p>
+                            <div class="text-xs text-gray-600 space-y-1 mb-4">
+                                <div><strong>Diretor:</strong> Lucas Almeida</div>
+                            </div>
+                        </div>
+                        <div class="pt-4 border-t border-gray-100 flex justify-between items-center">
+                            <span class="text-xs text-gray-400">2 integrantes</span>
+                            <button class="text-xs font-semibold text-[#4f46e5] hover:underline">Editar
+                                Diretoria</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-lg text-gray-900">Diretoria Financeira</h3>
+                                <span
+                                    class="bg-[#eef2ff] text-[#4f46e5] text-xs px-2 py-0.5 rounded font-semibold">2025</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mb-4">Gestão financeira, elaboração de orçamentos e
+                                contabilidade.</p>
+                            <div class="text-xs text-gray-600 space-y-1 mb-4">
+                                <div><strong>Diretor:</strong> Juliana Santos</div>
+                            </div>
+                        </div>
+                        <div class="pt-4 border-t border-gray-100 flex justify-between items-center">
+                            <span class="text-xs text-gray-400">2 integrantes</span>
+                            <button class="text-xs font-semibold text-[#4f46e5] hover:underline">Editar
+                                Diretoria</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div x-show="editingDir === 'projetos'"
+                    class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" x-cloak>
+                    <div class="bg-white rounded-xl shadow-xl max-w-lg w-full overflow-hidden"
+                        @click.away="editingDir = null">
+                        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                            <h3 class="text-lg font-bold text-gray-900">Editar Diretoria</h3>
+                            <button @click="editingDir = null" class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <form class="p-6 space-y-4" @submit.prevent="editingDir = null">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Nome da
+                                    Diretoria</label>
+                                <input type="text" value="Diretoria de Projetos"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Descrição</label>
+                                <textarea
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none h-20">Responsável pela gestão e execução dos projetos de consultoria</textarea>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Diretor
+                                        Responsável</label>
+                                    <select
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">
+                                        <option selected>Mariana Oliveira</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Ano</label>
+                                    <input type="text" value="2025"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Status</label>
+                                    <select
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">
+                                        <option selected>Ativa</option>
+                                        <option>Encerrada</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Integrantes</label>
+                                <div
+                                    class="flex flex-wrap gap-2 p-2 border border-gray-200 rounded-lg bg-gray-50 text-xs font-medium text-gray-700">
+                                    <span
+                                        class="bg-white border border-gray-300 px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">Gabriel
+                                        Ferreira</span>
+                                    <span
+                                        class="bg-white border border-gray-300 px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">Lucas
+                                        Mendes</span>
+                                    <span
+                                        class="bg-white border border-gray-300 px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">Ana
+                                        Paula</span>
+                                </div>
+                            </div>
+                            <div class="pt-4 border-t border-gray-100 flex justify-end gap-3">
+                                <button type="button" @click="editingDir = null"
+                                    class="px-4 py-2 border border-gray-300 text-gray-700 font-medium text-sm rounded-lg hover:bg-gray-50">Cancelar</button>
+                                <button type="submit"
+                                    class="px-4 py-2 bg-[#4f46e5] hover:bg-[#1e293b] text-white font-medium text-sm rounded-lg shadow-sm">Atualizar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+            <div x-show="currentTab === 'historico'" x-cloak x-data="{
+                editando: false,
+                empresa: {
+                    nome: 'Newsly',
+                    descricao: 'Empresa júnior de tecnologia focada em inovação, desenvolvimento e impacto social.',
+                    cor: '#4f46e5',
+                    imagem: ''
+                },
+                botaoEditar() {
+                    this.editando = !this.editando;
+                },
+                handleImagem(event) {
+                    const file = event.target.files && event.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        this.empresa.imagem = reader.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }">
+                <div class="mb-6 flex items-center justify-between gap-4">
+                    <div>
+                        <span class="text-xs font-semibold text-gray-400 tracking-wider uppercase">Configurações</span>
+                        <h2 class="text-2xl font-bold text-gray-900">Perfil da empresa</h2>
+                    </div>
+                    <button type="button" @click="botaoEditar()"
+                        class="bg-[#4f46e5] hover:bg-[#1e293b] text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-colors">
+                        <span x-text="editando ? 'Cancelar' : 'Editar'">Editar</span>
+                    </button>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-8">
+                        <div class="flex flex-col items-center">
+                            <div class="w-40 h-40 rounded-2xl border border-dashed border-gray-300 bg-gray-50 flex items-center justify-center overflow-hidden shadow-inner">
+                                <img x-show="empresa.imagem" :src="empresa.imagem" alt="Logo da empresa" class="w-full h-full object-cover" x-cloak>
+                                <svg x-show="!empresa.imagem" class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <label x-show="editando" class="mt-4 inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
+                                Adicionar imagem
+                                <input type="file" accept="image/png,image/svg+xml,image/jpeg" class="hidden" @change="handleImagem($event)">
+                            </label>
+                        </div>
+
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Nome da empresa</label>
+                                <input type="text" x-model="empresa.nome" :disabled="!editando"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Descrição</label>
+                                <textarea x-model="empresa.descricao" :disabled="!editando" rows="4"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed resize-none"></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Cor principal</label>
+                                <div class="flex items-center gap-3">
+                                    <input type="color" x-model="empresa.cor" :disabled="!editando"
+                                        class="h-11 w-16 border border-gray-300 rounded-lg bg-white disabled:cursor-not-allowed disabled:bg-gray-100">
+                                    <input type="text" x-model="empresa.cor" :disabled="!editando"
+                                        class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed">
+                                </div>
+                            </div>
+
+                            <div x-show="editando" class="flex justify-end pt-2">
+                                <button type="button"
+                                    class="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-colors">
+                                    Salvar alterações
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../script/script.js"></script>
+    <script src="../script/carregar.js"></script>
+</body>
+
+</html>a

@@ -1,0 +1,334 @@
+@startuml
+
+title CRUD - Sistema de Gestão da Empresa Júnior
+
+skinparam classAttributeIconSize 0
+
+' =========================
+' ENTIDADES
+' =========================
+
+class Usuario {
+    - Long id
+    - String nome
+    - String senha
+    - Contato contato
+}
+
+class Contato {
+    - String telefone
+    - String email
+}
+
+class Colaborador {
+    - UUID matricula
+    - Boolean atividade
+}
+
+class Gestor {
+    - UUID matricula
+    - List<Permicao> permissoes
+}
+
+class Responsavel {
+    - UUID matricula
+    - List<Permicao> permissoes
+}
+
+class Diretor {
+    - Colaborador colaborador
+    - Funcao funcao
+    - List<Permicao> permissoes
+    - Diretoria diretoria
+}
+
+class Funcao {
+    - String nome
+    - String descricao
+}
+
+class Diretoria {
+    - Long id
+    - Date criadaEm
+}
+
+class EmpresaJr {
+    - Long id
+    - String nome
+    - String cnpj
+}
+
+class Noticia {
+    - Long id
+    - String titulo
+    - String conteudo
+    - Date publicadaEm
+}
+
+class Comentario {
+    - Long id
+    - String conteudo
+    - Date publicadaEm
+}
+
+enum Permicao {
+    LEITOR
+    ESCRITOR
+}
+
+' =========================
+' CONTROLLERS
+' =========================
+
+class UsuarioController {
+    + criar()
+    + buscarPorId()
+    + buscarTodos()
+    + atualizar()
+    + excluir()
+}
+
+class ColaboradorController {
+    + criar()
+    + buscarPorId()
+    + buscarTodos()
+    + atualizar()
+    + excluir()
+}
+
+class EmpresaJrController {
+    + criar()
+    + buscarPorId()
+    + buscarTodos()
+    + atualizar()
+    + excluir()
+}
+
+class DiretoriaController {
+    + criar()
+    + buscarPorId()
+    + buscarTodos()
+    + atualizar()
+    + excluir()
+}
+
+class DiretorController {
+    + criar()
+    + buscarPorId()
+    + buscarTodos()
+    + atualizar()
+    + excluir()
+}
+
+class FuncaoController {
+    + criar()
+    + buscarPorId()
+    + buscarTodos()
+    + atualizar()
+    + excluir()
+}
+
+class NoticiaController {
+    + criar()
+    + buscarPorId()
+    + buscarTodos()
+    + atualizar()
+    + excluir()
+}
+
+class ComentarioController {
+    + criar()
+    + buscarPorId()
+    + buscarTodos()
+    + atualizar()
+    + excluir()
+}
+
+' =========================
+' SERVICES
+' =========================
+
+class UsuarioService {
+    + criar()
+    + buscarPorId()
+    + buscarTodos()
+    + atualizar()
+    + excluir()
+}
+
+class ColaboradorService {
+    + criar()
+    + buscarPorId()
+    + buscarTodos()
+    + atualizar()
+    + excluir()
+}
+
+class EmpresaJrService {
+    + criar()
+    + buscarPorId()
+    + buscarTodos()
+    + atualizar()
+    + excluir()
+}
+
+class DiretoriaService {
+    + criar()
+    + buscarPorId()
+    + buscarTodos()
+    + atualizar()
+    + excluir()
+}
+
+class DiretorService {
+    + criar()
+    + buscarPorId()
+    + buscarTodos()
+    + atualizar()
+    + excluir()
+}
+
+class FuncaoService {
+    + criar()
+    + buscarPorId()
+    + buscarTodos()
+    + atualizar()
+    + excluir()
+}
+
+class NoticiaService {
+    + criar()
+    + buscarPorId()
+    + buscarTodos()
+    + atualizar()
+    + excluir()
+}
+
+class ComentarioService {
+    + criar()
+    + buscarPorId()
+    + buscarTodos()
+    + atualizar()
+    + excluir()
+}
+
+' =========================
+' REPOSITORIES
+' =========================
+
+interface UsuarioRepository {
+    + save()
+    + findById()
+    + findAll()
+    + deleteById()
+}
+
+interface ColaboradorRepository {
+    + save()
+    + findById()
+    + findAll()
+    + deleteById()
+}
+
+interface EmpresaJrRepository {
+    + save()
+    + findById()
+    + findAll()
+    + deleteById()
+}
+
+interface DiretoriaRepository {
+    + save()
+    + findById()
+    + findAll()
+    + deleteById()
+}
+
+interface DiretorRepository {
+    + save()
+    + findById()
+    + findAll()
+    + deleteById()
+}
+
+interface FuncaoRepository {
+    + save()
+    + findById()
+    + findAll()
+    + deleteById()
+}
+
+interface NoticiaRepository {
+    + save()
+    + findById()
+    + findAll()
+    + deleteById()
+}
+
+interface ComentarioRepository {
+    + save()
+    + findById()
+    + findAll()
+    + deleteById()
+}
+
+' =========================
+' CRUD
+' =========================
+
+UsuarioController --> UsuarioService
+UsuarioService --> UsuarioRepository
+UsuarioRepository --> Usuario
+
+ColaboradorController --> ColaboradorService
+ColaboradorService --> ColaboradorRepository
+ColaboradorRepository --> Colaborador
+
+EmpresaJrController --> EmpresaJrService
+EmpresaJrService --> EmpresaJrRepository
+EmpresaJrRepository --> EmpresaJr
+
+DiretoriaController --> DiretoriaService
+DiretoriaService --> DiretoriaRepository
+DiretoriaRepository --> Diretoria
+
+DiretorController --> DiretorService
+DiretorService --> DiretorRepository
+DiretorRepository --> Diretor
+
+FuncaoController --> FuncaoService
+FuncaoService --> FuncaoRepository
+FuncaoRepository --> Funcao
+
+NoticiaController --> NoticiaService
+NoticiaService --> NoticiaRepository
+NoticiaRepository --> Noticia
+
+ComentarioController --> ComentarioService
+ComentarioService --> ComentarioRepository
+ComentarioRepository --> Comentario
+
+' =========================
+' RELACIONAMENTOS
+' =========================
+
+Usuario "1" -- "1" Contato
+
+Usuario <|-- Colaborador
+Usuario <|-- Gestor
+Usuario <|-- Responsavel
+
+Colaborador "1" -- "0..1" Diretor
+Diretor "1" -- "1" Funcao
+Diretor "1" -- "1" Diretoria
+
+Responsavel "1" -- "1" EmpresaJr
+EmpresaJr "1" -- "1..*" Diretoria
+EmpresaJr "1" -- "0..*" Colaborador
+
+EmpresaJr "1" -- "0..*" Noticia
+Noticia "1" -- "0..*" Comentario
+
+Comentario "1" -- "0..*" Comentario : respostas
+
+@endumll

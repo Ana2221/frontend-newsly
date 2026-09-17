@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Newwsly</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <script src="../script/script.js"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans flex flex-col min-h-screen">
+
+    <main class="flex-grow flex items-center justify-center px-4 py-16">
+
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 w-full max-w-md">
+
+            <!-- Título -->
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">
+                    Seja bem-vindo
+                </h2>
+
+                <p class="text-sm text-gray-500 mt-1">
+                    Entre com sua conta
+                </p>
+            </div>
+
+            <!-- Login com Google -->
+            <button type="button"
+                class="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 transition shadow-sm mb-4">
+                <svg class="w-4 h-4" viewBox="0 0 24 24">
+                    <path fill="#EA4335"
+                        d="M12.24 10.285V14.4h6.887c-.275 1.565-1.88 4.604-6.887 4.604-4.33 0-7.866-3.577-7.866-8s3.536-8 7.866-8c2.46 0 4.105 1.025 5.047 1.926l3.227-3.11C18.432 2.06 15.66 1 12.24 1 6.033 1 1 6.033 1 12.24s5.033 11.24 11.24 11.24c6.478 0 10.793-4.537 10.793-10.99 0-.74-.08-1.3-.176-1.856H12.24z" />
+                </svg>
+
+                Continue com o Google
+            </button>
+
+            <!-- Separador -->
+            <div class="relative flex py-3 items-center text-xs text-gray-400 uppercase font-semibold mb-4">
+                <div class="flex-grow border-t border-gray-200"></div>
+
+                <span class="flex-shrink mx-4 text-gray-400">
+                    OR
+                </span>
+
+                <div class="flex-grow border-t border-gray-200"></div>
+            </div>
+
+            <!-- FORMULÁRIO -->
+            <form x-data="loginController()" @submit.prevent="realizarLogin()" class="space-y-4">
+
+                <!-- Email -->
+                <div>
+
+                    <label for="email" class="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
+                        Email
+                    </label>
+
+                    <input id="email" type="email" x-model="form.email" placeholder="Digite seu email"
+                        autocomplete="email" required
+                        class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+
+                </div>
+
+                <!-- Senha -->
+                <div>
+
+                    <div class="flex justify-between items-center mb-1">
+
+                        <label for="senha" class="block text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Senha
+                        </label>
+
+                        <a href="#" class="text-xs text-indigo-600 hover:underline">
+                            Esqueceu a senha?
+                        </a>
+
+                    </div>
+
+                    <input id="senha" type="password" x-model="form.senha" placeholder="Digite sua senha"
+                        autocomplete="current-password" required
+                        class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+
+                </div>
+
+                <!-- Botão -->
+                <button type="submit" :disabled="carregando"
+                    class="w-full bg-indigo-600 text-white py-2.5 rounded-xl font-medium hover:bg-indigo-700 transition shadow-sm text-sm mt-2 disabled:opacity-50 disabled:cursor-not-allowed">
+
+                    <span x-show="!carregando">
+                        Log in
+                    </span>
+
+                    <span x-show="carregando">
+                        Entrando...
+                    </span>
+
+                </button>
+
+            </form>
+
+            <!-- Cadastro -->
+            <p class="text-center text-xs text-gray-500 mt-6">
+
+                Não tem uma conta?
+
+                <a href="cadastro.html" class="text-indigo-600 font-semibold hover:underline">
+                    Criar uma conta
+                </a>
+
+            </p>
+
+        </div>
+
+    </main>
+    <script src="../script/login.js"></script>
+</body>
+</html>

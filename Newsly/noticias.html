@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notícias | Nexus Júnior</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../script/script.js"></script>
+    <script defer src="../script/app.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen">
+        <nav class="w-3/4 mx-auto bg-white rounded-full bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-20 border-gray-100 sticky top-5 z-50 shadow-md"
+        x-data="{ mobileMenuOpen: false, activeTab: 'home' }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+
+                <div class="flex items-center space-x-3 cursor-pointer" @click="activeTab = 'home'">
+                    <img src="../static/Union.svg" class="w-10" />
+                </div>
+
+                <div class="hidden md:flex items-center space-x-1 text-sm font-medium">
+                    <a href="home.html" @click="activeTab = 'home'"
+                        :class="activeTab === 'home' ? 'bg-[#04007C] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
+                        class="px-4 py-2 rounded-lg transition-all duration-200">
+                        Home
+                    </a>
+
+                    <a href="empresas.html" @click="activeTab = 'empresas'"
+                        :class="activeTab === 'empresas' ? 'bg-[#04007C] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
+                        class="px-4 py-2 rounded-lg transition-all duration-200">
+                        Empresas
+                    </a>
+
+                    <a href="noticias.html" @click="activeTab = 'noticias'"
+                        :class="activeTab === 'noticias' ? 'bg-[#04007C] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
+                        class="px-4 py-2 rounded-lg transition-all duration-200">
+                        Notícias
+                    </a>
+                </div>
+
+                <div class="hidden md:flex items-center">
+                    <a href="login.html" @click="activeTab = 'login'"
+                        class="relative inline-flex items-center justify-center px-4 py-2 rounded-xl text-sm font-bold text-white bg-[#04007C] hover:bg-blue-800 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900">
+                        Acessar Conta
+                    </a>
+                </div>
+
+                <div class="flex items-center md:hidden">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button"
+                        class="inline-flex items-center justify-center p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                        aria-controls="mobile-menu" :aria-expanded="mobileMenuOpen.toString()">
+                        <span class="sr-only">Abrir menu</span>
+                        <svg x-show="!mobileMenuOpen" class="h-6 w-6" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                        <svg x-show="mobileMenuOpen" x-cloak class="h-6 w-6" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="mobileMenuOpen" x-cloak x-transition:enter="transition ease-out duration-150"
+            x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-2" class="md:hidden border-t border-gray-100 bg-white"
+            id="mobile-menu">
+            <div class="px-2 pt-2 pb-4 space-y-1 shadow-inner">
+                <a href="home.html" @click="activeTab = 'home'; mobileMenuOpen = false"
+                    :class="activeTab === 'home' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
+                    class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
+                    Home
+                </a>
+                <a href="empresas.html" @click="activeTab = 'empresas'; mobileMenuOpen = false"
+                    :class="activeTab === 'empresas' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
+                    class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
+                    Empresas
+                </a>
+                <a href="noticias.html" @click="activeTab = 'noticias'; mobileMenuOpen = false"
+                    :class="activeTab === 'noticias' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
+                    class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
+                    Notícias
+                </a>
+                <div class="pt-4 pb-2 border-t border-gray-100 mt-2 px-2">
+                    <a href="login.html" @click="activeTab = 'login'; mobileMenuOpen = false"
+                        class="w-full flex items-center justify-center px-4 py-2.5 rounded-xl text-base font-bold text-white bg-slate-950 hover:bg-slate-800 transition shadow-sm">
+                        Acessar Conta
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" x-data="noticiasPublicasPage()">
+        <div class="mb-10">
+            <span class="bg-[#0f172a] text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+                Últimas Notícias
+            </span>
+            <h1 class="text-4xl font-extrabold text-[#0f172a] mt-4 tracking-tight">Fique por dentro</h1>
+            <p class="text-gray-500 text-lg mt-2">Últimas novidades, eventos e conquistas do movimento de empresas juniores.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 border-b border-gray-200 pb-6 mb-10">
+            <template x-for="cat in ['Todas', 'Eventos', 'Prêmios', 'Projetos', 'Parcerias', 'Inovação']">
+                <button @click="activeFilter = cat"
+                        :class="activeFilter === cat ? 'bg-[#0f172a] text-white' : 'text-gray-500 hover:text-gray-900 bg-transparent'"
+                        class="px-4 py-2 rounded font-medium text-sm transition-colors duration-200"
+                        x-text="cat">
+                </button>
+            </template>
+        </div>
+
+        <div class="mb-16" x-show="activeFilter === 'Todas'">
+            <div class="flex items-center gap-2 mb-6 border-l-4 border-[#0f172a] pl-3">
+                <h2 class="text-2xl font-bold text-[#0f172a]">Em Destaque</h2>
+            </div>
+
+            <div x-show="!carregando && noticiasVisiveis().slice(0, 2).length === 0" class="bg-gray-50 border border-gray-200 rounded-xl p-10 text-center">
+                <p class="text-gray-700 font-semibold text-lg">Não há notícias por enquanto</p>
+                <p class="text-gray-500 text-sm mt-2">Ainda não existem destaques para mostrar no momento.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8" x-show="!carregando && noticiasVisiveis().slice(0, 2).length > 0">
+                <template x-for="noticia in noticiasVisiveis().slice(0, 2)" :key="noticia.id">
+                    <div class="group cursor-pointer">
+                        <div class="overflow-hidden rounded-lg aspect-video mb-4 bg-gray-200">
+                            <img :src="noticia.img" :alt="noticia.titulo" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-400 font-medium mb-2">
+                            <span class="bg-[#0f172a] text-white px-2 py-0.5 font-bold rounded" x-text="noticia.tipo"></span>
+                            <span x-text="noticia.data"></span>
+                            <span>•</span>
+                            <span x-text="noticia.tempo"></span>
+                        </div>
+                        <h3 class="text-xl font-bold text-[#0f172a] leading-snug group-hover:text-indigo-600 transition" x-text="noticia.titulo"></h3>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <div>
+            <div class="flex items-center gap-2 mb-6 border-l-4 border-[#0f172a] pl-3">
+                <h2 class="text-2xl font-bold text-[#0f172a]">Todas as Notícias</h2>
+            </div>
+
+            <div x-show="carregando" class="text-center text-gray-500 py-8">Carregando notícias...</div>
+            <div x-show="erro" x-text="erro" class="text-center text-amber-700 py-6"></div>
+
+            <div x-show="!carregando && noticiasVisiveis().length === 0" class="bg-gray-50 border border-gray-200 rounded-xl p-10 text-center">
+                <p class="text-gray-700 font-semibold text-lg">Não há notícias por enquanto</p>
+                <p class="text-gray-500 text-sm mt-2">Nenhuma notícia encontrada nesta categoria. Tente outra opção.</p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-8" x-show="!carregando && noticiasVisiveis().length > 0">
+                <template x-for="noticia in noticiasVisiveis()" :key="noticia.id">
+                    <div class="group cursor-pointer flex flex-col">
+                        
+                        <div class="overflow-hidden rounded-lg aspect-video mb-4 bg-gray-200">
+                            <img :src="noticia.img" :alt="noticia.titulo" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        </div>
+                        <div class="flex items-center gap-2 text-[11px] text-gray-400 font-medium mb-2">
+                            <span class="bg-[#0f172a] text-white px-2 py-0.5 font-bold rounded" x-text="noticia.tipo"></span>
+                            <span x-text="noticia.data"></span>
+                        </div>
+                        <h4 class="text-lg font-bold text-[#0f172a] leading-tight mb-2 group-hover:text-indigo-600 transition" x-text="noticia.titulo"></h4>
+                        <p class="text-sm text-gray-500 line-clamp-2" x-text="noticia.desc"></p>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+    </main>
+
+    </body>
+</html>

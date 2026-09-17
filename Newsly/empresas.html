@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empresas | Newsly</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../script/script.js"></script>
+    <script defer src="../script/app.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans flex flex-col min-h-screen" x-data="empresasPage()">
+    <nav class="w-3/4 mx-auto bg-white rounded-full bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-20 border-gray-100 sticky top-5 z-50 shadow-md"
+        x-data="{ mobileMenuOpen: false, activeTab: 'home' }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+
+                <div class="flex items-center space-x-3 cursor-pointer" @click="activeTab = 'home'">
+                    <img src="../static/Union.svg" class="w-10" alt="Newsly" />
+                </div>
+
+                <div class="hidden md:flex items-center space-x-1 text-sm font-medium">
+                    <a href="home.html" @click="activeTab = 'home'"
+                        :class="activeTab === 'home' ? 'bg-[#04007C] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
+                        class="px-4 py-2 rounded-lg transition-all duration-200">
+                        Home
+                    </a>
+
+                    <a href="empresas.html" @click="activeTab = 'empresas'"
+                        :class="activeTab === 'empresas' ? 'bg-[#04007C] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
+                        class="px-4 py-2 rounded-lg transition-all duration-200">
+                        Empresas
+                    </a>
+
+                    <a href="noticias.html" @click="activeTab = 'noticias'"
+                        :class="activeTab === 'noticias' ? 'bg-[#04007C] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
+                        class="px-4 py-2 rounded-lg transition-all duration-200">
+                        Notícias
+                    </a>
+                </div>
+
+                <div class="hidden md:flex items-center">
+                    <a href="login.html" @click="activeTab = 'login'"
+                        class="relative inline-flex items-center justify-center px-4 py-2 rounded-xl text-sm font-bold text-white bg-[#04007C] hover:bg-blue-800 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900">
+                        Acessar Conta
+                    </a>
+                </div>
+
+                <div class="flex items-center md:hidden">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button"
+                        class="inline-flex items-center justify-center p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                        aria-controls="mobile-menu" :aria-expanded="mobileMenuOpen.toString()">
+                        <span class="sr-only">Abrir menu</span>
+                        <svg x-show="!mobileMenuOpen" class="h-6 w-6" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                        <svg x-show="mobileMenuOpen" x-cloak class="h-6 w-6" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="mobileMenuOpen" x-cloak x-transition:enter="transition ease-out duration-150"
+            x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-2" class="md:hidden border-t border-gray-100 bg-white"
+            id="mobile-menu">
+            <div class="px-2 pt-2 pb-4 space-y-1 shadow-inner">
+                <a href="home.html" @click="activeTab = 'home'; mobileMenuOpen = false"
+                    :class="activeTab === 'home' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
+                    class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
+                    Home
+                </a>
+                <a href="empresas.html" @click="activeTab = 'empresas'; mobileMenuOpen = false"
+                    :class="activeTab === 'empresas' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
+                    class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
+                    Empresas
+                </a>
+                <a href="noticias.html" @click="activeTab = 'noticias'; mobileMenuOpen = false"
+                    :class="activeTab === 'noticias' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
+                    class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
+                    Notícias
+                </a>
+                <div class="pt-4 pb-2 border-t border-gray-100 mt-2 px-2">
+                    <a href="login.html" @click="activeTab = 'login'; mobileMenuOpen = false"
+                        class="w-full flex items-center justify-center px-4 py-2.5 rounded-xl text-base font-bold text-white bg-slate-950 hover:bg-slate-800 transition shadow-sm">
+                        Acessar Conta
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <main class="flex-grow py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center my-8">
+            <h1 class="text-3xl font-extrabold text-gray-900 mt-1 mb-2">Empresas em destaque</h1>
+            <p class="text-gray-500 max-w-xl mx-auto">Conheça algumas das empresas juniores mais inovadoras e atuantes
+                do movimento.</p>
+        </div>
+
+        <div class="max-w-md mx-auto mb-12">
+            <div class="relative">
+                <label for="company-search" class="sr-only">Buscar empresas</label>
+                <input id="company-search" type="text" x-model="search" placeholder="Buscar empresas..."
+                    class="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm text-sm">
+                <div class="absolute left-3.5 top-3.5 text-gray-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <p x-show="carregando" class="text-center text-gray-500 py-8">Carregando empresas...</p>
+        <output x-show="erro" x-text="erro" class="block text-center text-amber-700 py-4"></output>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <template x-for="empresa in empresasFiltradas()" :key="empresa.id">
+                <article class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition relative" >
+                    <span class="absolute top-4 right-4 bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-full font-medium" x-text="empresa.ano"></span>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 mt-2" :aria-label="empresa.nome">
+                        <a :href="`empresa.html?id=${empresa.id}`" :aria-label="`Ver detalhes de ${empresa.nome}`" class="after:absolute after:inset-0 focus:outline-none">
+                            <span class="sr-only">Ver detalhes de </span><span x-text="empresa.nome">Empresa</span>
+                        </a>
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-6" x-text="empresa.descricao"></p>
+                    <div class="border-t border-gray-100 pt-4 flex justify-between items-center text-xs text-gray-500">
+                        <span class="font-medium text-gray-700" x-text="`👤 ${empresa.responsavel}`"></span>
+                        <span x-text="`👥 ${empresa.membros} integrantes`"></span>
+                    </div>
+                </article>
+            </template>
+
+            <p x-show="empresasFiltradas().length === 0" class="md:col-span-3 text-center text-gray-500 py-12">
+                Nenhuma empresa encontrada.
+            </p>
+        </div>
+    </main>
+</body>
+
+</html>

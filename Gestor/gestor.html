@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de EJs - Painel da Federação</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../script/script.js"></script>
+    <script defer src="../script/app.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans" x-data="gestorPage()">
+
+    <div class="flex min-h-screen">
+        
+        <aside class="w-64 bg-white border-r border-gray-200 p-6 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="bg-indigo-600 text-white font-bold p-2 rounded-lg text-center w-10 h-10 flex items-center justify-center">
+                        EJ
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-bold text-gray-900 leading-tight">Gestor de EJs</h2>
+                        <p class="text-xs text-gray-500">Painel da Controle</p>
+                    </div>
+                </div>
+
+                <nav class="space-y-1">
+                    <button @click="currentTab = 'painel'" 
+                        :class="currentTab === 'painel' ? 'bg-indigo-50 text-indigo-600 font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors flex items-center gap-3">
+                        <span>Painel</span>
+                    </button>
+                    <button @click="currentTab = 'ejs'" 
+                        :class="currentTab === 'ejs' ? 'bg-indigo-50 text-indigo-600 font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors flex items-center gap-3">
+                        <span>Empresas Júnior</span>
+                    </button>
+                    <button @click="currentTab = 'noticias'" 
+                        :class="currentTab === 'noticias' ? 'bg-indigo-50 text-indigo-600 font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors flex items-center gap-3">
+                        <span>Notícias</span>
+                    </button>
+                </nav>
+            </div>
+
+            <div class="text-xs text-gray-400 border-t border-gray-100 pt-4">
+                &copy; 2026 Federação de EJs
+            </div>
+        </aside>
+
+        <main class="flex-1 p-8">
+            
+            <div x-show="currentTab === 'painel'">
+                <div class="mb-6">
+                    <p class="text-xs font-semibold text-indigo-600 tracking-wider uppercase">Visão Geral</p>
+                    <h1 class="text-2xl font-bold text-gray-900">Gestor de EJs</h1>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <p class="text-sm font-medium text-gray-500">Total de EJs</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2">5</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <p class="text-sm font-medium text-gray-500">EJs aprovadas</p>
+                        <p class="text-3xl font-bold text-emerald-600 mt-2">3</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <p class="text-sm font-medium text-gray-500">Pendentes</p>
+                        <p class="text-3xl font-bold text-amber-500 mt-2">4</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <p class="text-sm font-medium text-gray-500">Notícias</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2">5</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm lg:col-span-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-gray-900">EJs recentes</h3>
+                            <button @click="currentTab = 'ejs'" class="text-xs text-indigo-600 hover:underline font-medium">Ver todas</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-gray-600">
+                                <thead class="bg-gray-50 text-gray-700 text-xs uppercase font-semibold">
+                                    <tr>
+                                        <th class="p-3">Sigla</th>
+                                        <th class="p-3">Nome / Localização</th>
+                                        <th class="p-3 text-right">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <tr>
+                                        <td class="p-3 font-bold text-indigo-600">NJ</td>
+                                        <td class="p-3">
+                                            <div class="font-medium text-gray-900">Seeds</div>
+                                            <div class="text-xs text-gray-400">Inovação e Tecnologia</div>
+                                        </td>
+                                        <td class="p-3 text-right"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700">Aprovada</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-indigo-600">Ej</td>
+                                        <td class="p-3">
+                                            <div class="font-medium text-gray-900">Edificare</div>
+                                            <div class="text-xs text-gray-400">Engenharia Civil</div>
+                                        </td>
+                                        <td class="p-3 text-right"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700">Aprovada</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-indigo-600">EJ</td>
+                                        <td class="p-3">
+                                            <div class="font-medium text-gray-900">Faro Comunicações</div>
+                                            <div class="text-xs text-gray-400">Publicidade e Propaganda</div>
+                                        </td>
+                                        <td class="p-3 text-right"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700">Aprovada</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-indigo-600">EJ</td>
+                                        <td class="p-3">
+                                            <div class="font-medium text-gray-900">Valor</div>
+                                            <div class="text-xs text-gray-400">Administração</div>
+                                        </td>
+                                        <td class="p-3 text-right"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-50 text-amber-700">Pendente</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-indigo-600">EJ</td>
+                                        <td class="p-3">
+                                            <div class="font-medium text-gray-900">Fonotec</div>
+                                            <div class="text-xs text-gray-400">Fonoaudologia</div>
+                                        </td>
+                                        <td class="p-3 text-right"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-red-50 text-red-700">Rejeitada</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-gray-900">Notícias aguardando aprovação</h3>
+                            <button @click="currentTab = 'noticias'" class="text-xs text-indigo-600 hover:underline font-medium">Ver todas</button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="p-3 border border-gray-100 rounded-lg bg-gray-50">
+                                <div class="flex justify-between items-start mb-1">
+                                    <span class="text-[10px] uppercase font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">Projeto</span>
+                                    <span class="text-xs text-gray-400">19 jan 2025</span>
+                                </div>
+                                <h4 class="text-sm font-semibold text-gray-900 truncate">Projeto com StartupXYZ foi concluído</h4>
+                                <p class="text-xs text-gray-500 mt-1">Impacto Consultoria Júnior</p>
+                            </div>
+
+                            <div class="p-3 border border-gray-100 rounded-lg bg-gray-50">
+                                <div class="flex justify-between items-start mb-1">
+                                    <span class="text-[10px] uppercase font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">Capacitação</span>
+                                    <span class="text-xs text-gray-400">27 jan 2025</span>
+                                </div>
+                                <h4 class="text-sm font-semibold text-gray-900 truncate">Workshop de Design Thinking</h4>
+                                <p class="text-xs text-gray-500 mt-1">Nexus Júnior</p>
+                            </div>
+
+                            <div class="p-3 border border-gray-100 rounded-lg bg-gray-50">
+                                <div class="flex justify-between items-start mb-1">
+                                    <span class="text-[10px] uppercase font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">Evento</span>
+                                    <span class="text-xs text-gray-400">10 fev 2025</span>
+                                </div>
+                                <h4 class="text-sm font-semibold text-gray-900 truncate">Encontro Regional de EJs</h4>
+                                <p class="text-xs text-gray-500 mt-1">Lex Júnior</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div x-show="currentTab === 'ejs'" style="display: none;">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <p class="text-xs font-semibold text-indigo-600 tracking-wider uppercase">Gestão</p>
+                        <h1 class="text-2xl font-bold text-gray-900">Empresas Júnior</h1>
+                    </div>
+                    <button @click="modalEJ = true" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg transition-colors shadow-sm">
+                        Nova EJ
+                    </button>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div class="flex rounded-lg bg-gray-100 p-0.5 text-xs font-medium">
+                        <button class="bg-white text-gray-900 px-3 py-1.5 rounded-md shadow-sm">Todas</button>
+                        <button class="text-gray-500 hover:text-gray-900 px-3 py-1.5">Aprovadas</button>
+                        <button class="text-gray-500 hover:text-gray-900 px-3 py-1.5">Pendentes</button>
+                        <button class="text-gray-500 hover:text-gray-900 px-3 py-1.5">Rejeitadas</button>
+                    </div>
+                    <div class="w-full md:w-64">
+                        <input type="text" placeholder="Buscar EJ, universidade ou área..." class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-indigo-100 text-indigo-700 font-bold w-10 h-10 rounded-lg flex items-center justify-center">NJ</div>
+                                    <div>
+                                        <h3 class="font-bold text-gray-900 text-base">Nexus Júnior</h3>
+                                        <p class="text-xs text-gray-400">Universidade Federal do Estado</p>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700">Aprovada</span>
+                            </div>
+                            <span class="text-xs font-medium px-2 py-0.5 rounded bg-gray-100 text-gray-600">Tecnologia</span>
+                            <p class="text-sm text-gray-600 mt-3">Consultoria em desenvolvimento de software e transformação digital.</p>
+                            <p class="text-xs text-gray-400 mt-1">São Luís, MA</p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-400">
+                            <span>24 membros · Desde 2018</span>
+                            <span class="text-gray-500 font-medium">contato@nexusjr.com</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-indigo-100 text-indigo-700 font-bold w-10 h-10 rounded-lg flex items-center justify-center">IC</div>
+                                    <div>
+                                        <h3 class="font-bold text-gray-900 text-base">Impacto Consultoria Júnior</h3>
+                                        <p class="text-xs text-gray-400">Universidade Estadual Central</p>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700">Aprovada</span>
+                            </div>
+                            <span class="text-xs font-medium px-2 py-0.5 rounded bg-gray-100 text-gray-600">Consultoria</span>
+                            <p class="text-sm text-gray-600 mt-3">Consultoria empresarial e estratégica para pequenos negócios.</p>
+                            <p class="text-xs text-gray-400 mt-1">São Luís, MA</p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-400">
+                            <span>18 membros · Desde 2016</span>
+                            <span class="text-gray-500 font-medium">contato@impactojr.com</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl border border-indigo-200 shadow-sm flex flex-col justify-between relative bg-indigo-50/10">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-indigo-200 text-indigo-800 font-bold w-10 h-10 rounded-lg flex items-center justify-center">LJ</div>
+                                    <div>
+                                        <h3 class="font-bold text-gray-900 text-base">Lex Júnior</h3>
+                                        <p class="text-xs text-gray-400">Faculdade de Direito Modelo</p>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-50 text-amber-700">Pendente</span>
+                            </div>
+                            <span class="text-xs font-medium px-2 py-0.5 rounded bg-gray-100 text-gray-600">Direito</span>
+                            <p class="text-sm text-gray-600 mt-3">Assessoria jurídica para empreendedores e startups.</p>
+                            <p class="text-xs text-gray-400 mt-1">São Luís, MA</p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
+                            <div class="text-xs text-gray-400 flex flex-col">
+                                <span>12 membros · Desde 2020</span>
+                                <span class="text-gray-500 font-medium">contato@lexjr.com</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded transition-colors shadow-sm">Aprovar</button>
+                                <button class="text-xs font-semibold bg-white hover:bg-gray-50 border border-gray-200 text-red-600 px-3 py-1.5 rounded transition-colors">Rejeitar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-indigo-100 text-indigo-700 font-bold w-10 h-10 rounded-lg flex items-center justify-center">EJ</div>
+                                    <div>
+                                        <h3 class="font-bold text-gray-900 text-base">Engenha Júnior</h3>
+                                        <p class="text-xs text-gray-400">Instituto Politécnico Nacional</p>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700">Aprovada</span>
+                            </div>
+                            <span class="text-xs font-medium px-2 py-0.5 rounded bg-gray-100 text-gray-600">Engenharia</span>
+                            <p class="text-sm text-gray-600 mt-3">Projetos de engenharia civil, elétrica e mecânica.</p>
+                            <p class="text-xs text-gray-400 mt-1">São Luís, MA</p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-400">
+                            <span>31 membros · Desde 2014</span>
+                            <span class="text-gray-500 font-medium">contato@engenhajr.com</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-betweenopacity-75 bg-gray-50/50">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-gray-200 text-gray-600 font-bold w-10 h-10 rounded-lg flex items-center justify-center">PD</div>
+                                    <div>
+                                        <h3 class="font-bold text-gray-900 text-base">Pixel Design Júnior</h3>
+                                        <p class="text-xs text-gray-400">Escola Superior de Artes</p>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-red-50 text-red-700">Rejeitada</span>
+                            </div>
+                            <span class="text-xs font-medium px-2 py-0.5 rounded bg-gray-100 text-gray-600">Design</span>
+                            <p class="text-sm text-gray-600 mt-3">Branding, identidade visual e design de produtos digitais.</p>
+                            <p class="text-xs text-gray-400 mt-1">São Luís, MA</p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-400">
+                            <span>9 membros · Desde 2021</span>
+                            <span class="text-gray-500 font-medium">contato@pixeljr.com</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div x-show="currentTab === 'noticias'" style="display: none;">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <p class="text-xs font-semibold text-indigo-600 tracking-wider uppercase">Sala de Imprensa</p>
+                        <h1 class="text-2xl font-bold text-gray-900">Notícias</h1>
+                    </div>
+                    <button @click="modalNoticia = true" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg transition-colors shadow-sm">
+                        Nova notícia
+                    </button>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div class="flex rounded-lg bg-gray-100 p-0.5 text-xs font-medium">
+                        <button class="bg-white text-gray-900 px-3 py-1.5 rounded-md shadow-sm">Todas</button>
+                        <button class="text-gray-500 hover:text-gray-900 px-3 py-1.5">Aprovadas</button>
+                        <button class="text-gray-500 hover:text-gray-900 px-3 py-1.5">Pendentes</button>
+                        <button class="text-gray-500 hover:text-gray-900 px-3 py-1.5">Rejeitadas</button>
+                    </div>
+                    <div class="w-full md:w-64">
+                        <input type="text" placeholder="Buscar notícia..." class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="text-[10px] font-bold uppercase tracking-wider bg-gray-100 text-gray-600 px-2 py-0.5 rounded">Institucional</span>
+                                <span class="text-xs text-gray-400">Aprovada 31 jan 2025</span>
+                            </div>
+                            <h3 class="font-bold text-gray-900 text-base">Processo Seletivo 2025.1 está aberto!</h3>
+                            <p class="text-sm text-gray-600 mt-1">Inscrições abertas até 15 de março para novos membros.</p>
+                            <p class="text-xs font-semibold text-indigo-600 mt-2">Nexus Júnior</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-indigo-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-indigo-50/10">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 px-2 py-0.5 rounded">Projeto</span>
+                                <span class="text-xs text-amber-600 font-medium">Pendente 19 jan 2025</span>
+                            </div>
+                            <h3 class="font-bold text-gray-900 text-base">Projeto com StartupXYZ foi concluído</h3>
+                            <p class="text-sm text-gray-600 mt-1">Consultoria de estratégia entregue com sucesso ao cliente.</p>
+                            <p class="text-xs font-semibold text-indigo-600 mt-2">Impacto Consultoria Júnior</p>
+                        </div>
+                        <div class="flex gap-2 w-full md:w-auto justify-end border-t md:border-t-0 pt-3 md:pt-0">
+                            <button class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded shadow-sm transition-colors">Aprovar</button>
+                            <button class="bg-white hover:bg-gray-50 text-red-600 border border-gray-200 text-xs font-semibold px-3 py-1.5 rounded transition-colors">Rejeitar</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-indigo-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-indigo-50/10">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 px-2 py-0.5 rounded">Capacitação</span>
+                                <span class="text-xs text-amber-600 font-medium">Pendente 27 jan 2025</span>
+                            </div>
+                            <h3 class="font-bold text-gray-900 text-base">Workshop de Design Thinking</h3>
+                            <p class="text-sm text-gray-600 mt-1">Capacitação aberta para todos os membros da federação.</p>
+                            <p class="text-xs font-semibold text-indigo-600 mt-2">Nexus Júnior</p>
+                        </div>
+                        <div class="flex gap-2 w-full md:w-auto justify-end border-t md:border-t-0 pt-3 md:pt-0">
+                            <button class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded shadow-sm transition-colors">Aprovar</button>
+                            <button class="bg-white hover:bg-gray-50 text-red-600 border border-gray-200 text-xs font-semibold px-3 py-1.5 rounded transition-colors">Rejeitar</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="text-[10px] font-bold uppercase tracking-wider bg-gray-100 text-gray-600 px-2 py-0.5 rounded">Resultado</span>
+                                <span class="text-xs text-gray-400">Aprovada 04 fev 2025</span>
+                            </div>
+                            <h3 class="font-bold text-gray-900 text-base">Resultados financeiros do semestre</h3>
+                            <p class="text-sm text-gray-600 mt-1">Faturamento 30% acima da meta estabelecida.</p>
+                            <p class="text-xs font-semibold text-indigo-600 mt-2">Engenha Júnior</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-indigo-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-indigo-50/10">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 px-2 py-0.5 rounded">Evento</span>
+                                <span class="text-xs text-amber-600 font-medium">Pendente 10 fev 2025</span>
+                            </div>
+                            <h3 class="font-bold text-gray-900 text-base">Encontro Regional de EJs</h3>
+                            <p class="text-sm text-gray-600 mt-1">Evento de networking reunindo mais de 200 empresários juniores.</p>
+                            <p class="text-xs font-semibold text-indigo-600 mt-2">Lex Júnior</p>
+                        </div>
+                        <div class="flex gap-2 w-full md:w-auto justify-end border-t md:border-t-0 pt-3 md:pt-0">
+                            <button class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded shadow-sm transition-colors">Aprovar</button>
+                            <button class="bg-white hover:bg-gray-50 text-red-600 border border-gray-200 text-xs font-semibold px-3 py-1.5 rounded transition-colors">Rejeitar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" x-show="modalNoticia" style="display: none;" x-transition>
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl relative" @click.away="modalNoticia = false">
+            <button @click="modalNoticia = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
+            
+            <h2 class="text-lg font-bold text-gray-900 mb-1">Nova Notícia</h2>
+            <p class="text-sm text-gray-500 mb-6">Crie uma notícia. Ela entrará como pendente para aprovação.</p>
+            
+            <form class="space-y-4" @submit.prevent="criarNoticiaGestor()">
+                <p x-show="erroNoticia" x-text="erroNoticia" class="rounded-lg bg-red-50 p-3 text-sm text-red-700" role="alert"></p>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Título</label>
+                    <input required type="text" x-model="novaNoticia.titulo" placeholder="Título da notícia" class="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Empresa Júnior</label>
+                        <select class="w-full border border-gray-200 rounded-lg p-2.5 text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <template x-for="empresa in empresas" :key="empresa.id">
+                                <option :value="empresa.id" x-text="empresa.nome"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Categoria</label>
+                        <select class="w-full border border-gray-200 rounded-lg p-2.5 text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="Institucional">Institucional</option>
+                            <option value="Projeto">Projeto</option>
+                            <option value="Capacitação">Capacitação</option>
+                            <option value="Evento">Evento</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Data</label>
+                    <input type="text" value="09 de jun. de 2026" readonly class="w-full border border-gray-200 rounded-lg p-2.5 text-sm bg-gray-50 text-gray-500 cursor-not-allowed">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Resumo</label>
+                    <textarea required rows="3" x-model="novaNoticia.conteudo" placeholder="Conteúdo da notícia" class="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                    <button type="button" @click="modalNoticia = false" class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">Cancelar</button>
+                    <button type="submit" :disabled="enviandoNoticia" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm disabled:opacity-50" x-text="enviandoNoticia ? 'Enviando...' : 'Criar notícia'"></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+   <div class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" x-show="modalEJ" style="display: none;" x-transition>
+    <div class="bg-white rounded-2xl max-w-lg w-full p-5 shadow-xl relative max-h-[90vh] overflow-y-auto" @click.away="modalEJ = false">
+        <button @click="modalEJ = false" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-lg font-bold">&times;</button>
+        
+        <h2 class="text-base font-bold text-gray-900 mb-1">Nova Empresa Júnior</h2>
+        <p class="text-xs text-gray-500 mb-4">A API persiste somente o nome e o CNPJ da empresa.</p>
+        
+        <form class="space-y-3" @submit.prevent="cadastrarEJ()">
+            <p x-show="erroEJ" x-text="erroEJ" class="rounded-lg bg-red-50 p-2 text-xs text-red-700" role="alert"></p>
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Nome da EJ</label>
+                <input required type="text" x-model="novaEJ.nome" placeholder="Ex: Nexus Júnior" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">CNPJ</label>
+                <input required type="text" x-model="novaEJ.cnpj" placeholder="00.000.000/0000-00" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Universidade</label>
+                <input type="text" x-model="novaEJ.universidade" placeholder="Ex: Universidade Federal do Estado" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Área de atuação</label>
+                    <select x-model="novaEJ.area" class="w-full border border-gray-200 rounded-lg p-2 text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="Consultoria">Consultoria</option>
+                        <option value="Tecnologia">Tecnologia</option>
+                        <option value="Engenharia">Engenharia</option>
+                        <option value="Direito">Direito</option>
+                        <option value="Design">Design</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Cidade/UF</label>
+                    <input type="text" x-model="novaEJ.cidade" placeholder="Ex: São Paulo, SP" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Presidente</label>
+                        <input type="text" x-model="novaEJ.presidente" placeholder="Nome do presidente" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">E-mail</label>
+                        <input type="email" x-model="novaEJ.email" placeholder="contato@ej.com" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Nº de membros</label>
+                        <input type="number" min="0" x-model="novaEJ.membros" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Ano de fundação</label>
+                        <input type="text" x-model="novaEJ.ano" placeholder="Ex: 2018" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Descrição</label>
+                <textarea rows="2" x-model="novaEJ.descricao" placeholder="Breve descrição da atuação da EJ" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-3 border-t border-gray-100">
+                <button type="button" @click="modalEJ = false" class="px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">Cancelar</button>
+                <button type="submit" :disabled="enviandoEJ" class="px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm disabled:opacity-50" x-text="enviandoEJ ? 'Enviando...' : 'Cadastrar EJ'"></button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
