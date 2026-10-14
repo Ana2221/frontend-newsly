@@ -20,7 +20,7 @@
                 </div>
 
                 <div class="hidden md:flex items-center space-x-1 text-sm font-medium">
-                    <a href="home.html" @click="activeTab = 'home'"
+                    <a href="../index.html" @click="activeTab = 'home'"
                         :class="activeTab === 'home' ? 'bg-[#04007C] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
                         class="px-4 py-2 rounded-lg transition-all duration-200">
                         Home
@@ -72,7 +72,7 @@
             x-transition:leave-end="opacity-0 -translate-y-2" class="md:hidden border-t border-gray-100 bg-white"
             id="mobile-menu">
             <div class="px-2 pt-2 pb-4 space-y-1 shadow-inner">
-                <a href="home.html" @click="activeTab = 'home'; mobileMenuOpen = false"
+                <a href="../index.html" @click="activeTab = 'home'; mobileMenuOpen = false"
                     :class="activeTab === 'home' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
                     class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
                     Home

@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home | Newsly</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="../script/script.js"></script>
-    <script src="../script/app.js"></script>
+    <script src="script/script.js"></script>
+    <script src="script/app.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
@@ -17,24 +17,24 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
 
-                <div class="flex items-center space-x-3 cursor-pointer" @click="activeTab = 'home'">
-                    <img src="../static/Union.svg" class="w-10" />
-                </div>
+                <a href="index.html" class="flex items-center space-x-3" aria-label="Newsly — página inicial">
+                    <img src="static/Union.svg" class="w-10" alt="Newsly" />
+                </a>
 
                 <div class="hidden md:flex items-center space-x-1 text-sm font-medium">
-                    <a href="home.html" @click="activeTab = 'home'"
+                    <a href="index.html" @click="activeTab = 'home'"
                         :class="activeTab === 'home' ? 'bg-[#04007C] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
                         class="px-4 py-2 rounded-lg transition-all duration-200">
                         Home
                     </a>
 
-                    <a href="empresas.html" @click="activeTab = 'empresas'"
+                    <a href="Newsly/empresas.html" @click="activeTab = 'empresas'"
                         :class="activeTab === 'empresas' ? 'bg-[#04007C] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
                         class="px-4 py-2 rounded-lg transition-all duration-200">
                         Empresas
                     </a>
 
-                    <a href="noticias.html" @click="activeTab = 'noticias'"
+                    <a href="Newsly/noticias.html" @click="activeTab = 'noticias'"
                         :class="activeTab === 'noticias' ? 'bg-[#04007C] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
                         class="px-4 py-2 rounded-lg transition-all duration-200">
                         Notícias
@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="hidden md:flex items-center">
-                    <a href="login.html" @click="activeTab = 'login'"
+                    <a href="Newsly/login.html" @click="activeTab = 'login'"
                         class="relative inline-flex items-center justify-center px-4 py-2 rounded-xl text-sm font-bold text-white bg-[#04007C] hover:bg-blue-800 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900">
                         Acessar Conta
                     </a>
@@ -79,18 +79,18 @@
                     class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
                     Home
                 </a>
-                <a href="empresas.html" @click="activeTab = 'empresas'; mobileMenuOpen = false"
+                <a href="Newsly/empresas.html" @click="activeTab = 'empresas'; mobileMenuOpen = false"
                     :class="activeTab === 'empresas' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
                     class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
                     Empresas
                 </a>
-                <a href="noticias.html" @click="activeTab = 'noticias'; mobileMenuOpen = false"
+                <a href="Newsly/noticias.html" @click="activeTab = 'noticias'; mobileMenuOpen = false"
                     :class="activeTab === 'noticias' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
                     class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
                     Notícias
                 </a>
                 <div class="pt-4 pb-2 border-t border-gray-100 mt-2 px-2">
-                    <a href="login.html" @click="activeTab = 'login'; mobileMenuOpen = false"
+                    <a href="Newsly/login.html" @click="activeTab = 'login'; mobileMenuOpen = false"
                         class="w-full flex items-center justify-center px-4 py-2.5 rounded-xl text-base font-bold text-white bg-slate-950 hover:bg-slate-800 transition shadow-sm">
                         Acessar Conta
                     </a>
@@ -102,13 +102,13 @@
     <main class="flex-grow py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center my-12">
             <div class="w-full flex justify-center">
-                <img src="../static/Group 12.svg" alt="">
+                <img src="static/Group 12.svg" alt="">
             </div>
             <p class="max-w-2xl mx-auto text-lg text-gray-500 mb-8">
                 Plataforma dedicada a conectar e fortalecer o ecossistema de empresas juniores, promovendo
                 empreendedorismo universitário e desenvolvimento profissional.
             </p>
-            <a href="empresas.html"
+            <a href="Newsly/empresas.html"
                 class="bg-[#04007C] text-white px-6 py-3 rounded-xl font-medium hover:bg-indigo-700 transition shadow">
                 Ver empresas
             </a>
@@ -120,7 +120,7 @@
                     <div>
                         <h2 class="text-2xl font-bold text-gray-900 mt-1">Últimas notícias </h2>
                     </div>
-                    <a href="noticias.html"
+                    <a href="Newsly/noticias.html"
                         class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 flex items-center">
                         Ver todas as notícias <span class="ml-1">→</span>
                     </a>
@@ -138,7 +138,7 @@
                         <a :href="linkDetalheNoticia(noticia)" class="block rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2">
                             <article class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition h-full">
                                 <div class="h-48 bg-slate-300 bg-cover bg-center flex items-end p-4 text-white font-bold"
-                                    :style="`background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.6)), url('${noticia.img || '../static/Union.svg'}')`">
+                                    :style="`background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.6)), url('${noticia.img || 'static/Union.svg'}')`">
                                     <span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs" x-text="(noticia.tipo || noticia.categoria || 'NOTÍCIA').toUpperCase()"></span>
                                 </div>
                                 <div class="p-6">

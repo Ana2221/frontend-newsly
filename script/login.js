@@ -31,7 +31,7 @@ window.loginController = function () {
 
                 const pages = {
                     RESPONSAVEL: "../Empresa/nexus.html",
-                    COLABORADOR: "home.html",
+                    COLABORADOR: "../index.html",
                     GESTOR: "../Gestor/gestor.html"
                 };
 

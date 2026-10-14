@@ -122,7 +122,7 @@ function noticiaDetalhePage() {
 
         get linkVoltar() {
             const destinos = {
-                home: "home.html",
+                home: "../index.html",
                 noticias: "noticias.html",
                 nexus: "../Empresa/nexus.html?tab=noticias&view=1",
                 gestor: "../Gestor/gestor.html?tab=noticias"
@@ -479,8 +479,8 @@ function homePage() {
 
         linkDetalheNoticia(noticia) {
             return noticia?.id
-                ? `noticia.html?id=${encodeURIComponent(noticia.id)}&origem=home`
-                : "noticias.html";
+                ? `Newsly/noticia.html?id=${encodeURIComponent(noticia.id)}&origem=home`
+                : "Newsly/noticias.html";
         },
 
         async init() {
@@ -492,7 +492,12 @@ function homePage() {
 
                 this.empresas = Array.isArray(empresasApi) ? empresasApi.slice(0, 3) : [];
                 const lista = Array.isArray(noticiasApi) ? noticiasApi : [];
-                this.noticias = lista.map(normalizarNoticiaApi).slice(0, 3);
+                this.noticias = lista.map(noticia => {
+                    const normalizada = normalizarNoticiaApi(noticia);
+                    return normalizada.imagemUrl
+                        ? normalizada
+                        : { ...normalizada, img: "static/Union.svg" };
+                }).slice(0, 3);
             } catch (error) {
                 this.erro = "Não foi possível carregar os destaques agora.";
                 console.error(error);
