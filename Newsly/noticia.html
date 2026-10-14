@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f8fafc">
+    <title>Notícia | Newsly</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../script/script.js"></script>
+    <script defer src="../script/app.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-800 antialiased" x-data="noticiaDetalhePage()" x-init="init()">
+    <header class="border-b border-slate-200 bg-white">
+        <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+            <a href="home.html" class="flex items-center gap-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                <img src="../static/Union.svg" alt="" class="h-9 w-9">
+                <span class="text-lg font-extrabold tracking-tight text-slate-900">Newsly</span>
+            </a>
+            <a :href="linkVoltar" class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                <span aria-hidden="true">←</span>
+                <span>Voltar</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+        <div x-show="carregando" role="status" class="rounded-2xl border border-slate-200 bg-white px-6 py-16 text-center text-slate-600 shadow-sm">
+            <span class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-indigo-100 border-t-indigo-700" aria-hidden="true"></span>
+            <p class="mt-4 font-medium">Carregando notícia...</p>
+        </div>
+
+        <section x-show="erro" x-cloak class="mx-auto max-w-2xl rounded-2xl border border-amber-200 bg-white p-8 text-center shadow-sm" role="alert" aria-live="assertive">
+            <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-2xl text-amber-700" aria-hidden="true">!</span>
+            <h1 class="mt-4 text-xl font-bold text-slate-900">Não foi possível abrir a notícia</h1>
+            <p class="mt-2 text-sm leading-6 text-slate-600" x-text="erro"></p>
+            <button type="button" @click="init()" class="mt-6 rounded-lg bg-indigo-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2">
+                Tentar novamente
+            </button>
+        </section>
+
+        <article x-show="noticia && !carregando && !erro" x-cloak class="mx-auto max-w-4xl">
+            <nav aria-label="Você está em" class="mb-6 text-sm text-slate-500">
+                <a :href="linkVoltar" class="hover:text-indigo-700 hover:underline">Notícias</a>
+                <span class="mx-2" aria-hidden="true">/</span>
+                <span class="text-slate-700">Leitura completa</span>
+            </nav>
+
+            <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+                <div x-show="noticia?.imagemUrl" class="aspect-[16/8] overflow-hidden bg-slate-100">
+                    <img :src="noticia?.img" :alt="noticia?.titulo" @error="$event.target.onerror = null; $event.target.src = '../static/Union.svg'" class="h-full w-full object-cover">
+                </div>
+
+                <div class="px-6 py-8 sm:px-10 sm:py-10 lg:px-14">
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
+                        <span class="rounded-full bg-indigo-50 px-3 py-1.5 text-indigo-800" x-text="noticia?.categoria || 'Notícia'"></span>
+                        <time x-show="noticia?.data" :datetime="noticia?.publicadaEm" x-text="noticia?.data"></time>
+                    </div>
+
+                    <h1 class="mt-5 text-3xl font-extrabold leading-tight tracking-tight text-slate-950 sm:text-4xl lg:text-5xl" x-text="noticia?.titulo"></h1>
+
+                    <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-slate-100 pb-6 text-sm text-slate-500">
+                        <span class="font-semibold text-slate-700" x-text="noticia?.empresaNome || 'Movimento de Empresas Juniores'"></span>
+                        <span aria-hidden="true">•</span>
+                        <span>Notícia do movimento EJ</span>
+                    </div>
+
+                    <div class="prose prose-slate mt-8 max-w-none whitespace-pre-line text-base leading-8 text-slate-700 sm:text-lg sm:leading-9" x-text="noticia?.conteudo || 'Esta notícia ainda não possui conteúdo adicional.'"></div>
+
+                    <footer class="mt-10 border-t border-slate-100 pt-6">
+                        <a :href="linkVoltar" class="inline-flex items-center gap-2 rounded-lg font-semibold text-indigo-700 hover:text-indigo-900 hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                            <span aria-hidden="true">←</span>
+                            Voltar às notícias
+                        </a>
+                    </footer>
+                </div>
+            </div>
+        </article>
+    </main>
+</body>
+</html>

@@ -30,7 +30,8 @@ async function carregarEmpresa() {
   logo.src = empresa.logo;
   logo.alt = `Logo da ${empresa.nome}`;
   logo.onerror = () => {
-    logo.src = `../static/${empresa.nome}.svg`;
+    logo.onerror = null;
+    logo.src = "../static/Union.svg";
   };
   document.getElementById("company-about").textContent = empresa.sobre;
   document.getElementById("company-contact").textContent =

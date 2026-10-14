@@ -128,9 +128,9 @@
             
             <div class="grid md:grid-cols-2 gap-8" x-show="!carregando && noticiasVisiveis().slice(0, 2).length > 0">
                 <template x-for="noticia in noticiasVisiveis().slice(0, 2)" :key="noticia.id">
-                    <div class="group cursor-pointer">
+                    <a :href="linkDetalheNoticia(noticia)" class="group block rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-4">
                         <div class="overflow-hidden rounded-lg aspect-video mb-4 bg-gray-200">
-                            <img :src="noticia.img" :alt="noticia.titulo" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                            <img :src="noticia.img" :alt="noticia.titulo" @error="$event.target.onerror = null; $event.target.src = '../static/Union.svg'" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                         </div>
                         <div class="flex items-center gap-2 text-xs text-gray-400 font-medium mb-2">
                             <span class="bg-[#0f172a] text-white px-2 py-0.5 font-bold rounded" x-text="noticia.tipo"></span>
@@ -139,7 +139,8 @@
                             <span x-text="noticia.tempo"></span>
                         </div>
                         <h3 class="text-xl font-bold text-[#0f172a] leading-snug group-hover:text-indigo-600 transition" x-text="noticia.titulo"></h3>
-                    </div>
+                        <span class="inline-block mt-3 text-sm font-semibold text-indigo-700">Ler notícia completa →</span>
+                    </a>
                 </template>
             </div>
         </div>
@@ -159,18 +160,19 @@
 
             <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-8" x-show="!carregando && noticiasVisiveis().length > 0">
                 <template x-for="noticia in noticiasVisiveis()" :key="noticia.id">
-                    <div class="group cursor-pointer flex flex-col">
+                    <a :href="linkDetalheNoticia(noticia)" class="group flex flex-col rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-4">
                         
                         <div class="overflow-hidden rounded-lg aspect-video mb-4 bg-gray-200">
-                            <img :src="noticia.img" :alt="noticia.titulo" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                            <img :src="noticia.img" :alt="noticia.titulo" @error="$event.target.onerror = null; $event.target.src = '../static/Union.svg'" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                         </div>
                         <div class="flex items-center gap-2 text-[11px] text-gray-400 font-medium mb-2">
                             <span class="bg-[#0f172a] text-white px-2 py-0.5 font-bold rounded" x-text="noticia.tipo"></span>
                             <span x-text="noticia.data"></span>
                         </div>
                         <h4 class="text-lg font-bold text-[#0f172a] leading-tight mb-2 group-hover:text-indigo-600 transition" x-text="noticia.titulo"></h4>
-                        <p class="text-sm text-gray-500 line-clamp-2" x-text="noticia.desc"></p>
-                    </div>
+                        <p class="text-sm text-gray-500 line-clamp-2" x-text="noticia.descricao || noticia.conteudo"></p>
+                        <span class="inline-block mt-3 text-sm font-semibold text-indigo-700">Ler notícia completa →</span>
+                    </a>
                 </template>
             </div>
         </div>

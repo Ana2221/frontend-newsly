@@ -18,17 +18,20 @@ function normalizarEmpresa(empresa) {
   const servicos = empresa.servicos || empresa.servicosOferecidos ||
     (Array.isArray(empresa.diretorias) ? empresa.diretorias.map(diretoria => `Diretoria ${diretoria.id}`) : []);
   const colaboradores = Array.isArray(empresa.colaboradores) ? empresa.colaboradores : [];
+  const logoUrl = empresa.logoUrl || empresa.logo || "";
+  const logo = logoUrl.startsWith("/") ? `${API_BASE_URL}${logoUrl}` : logoUrl || "../static/Union.svg";
 
   return {
     ...empresa,
     id: String(id),
     nome: empresa.nome || "Empresa sem nome",
     ano: empresa.ano || empresa.anoFundacao || "",
-    logo: empresa.logo || "../static/Union.svg",
-    capa: empresa.capa || empresa.logo || "../static/Union.svg",
+    logo,
+    logoUrl,
+    capa: empresa.capa || logo,
     descricao: empresa.descricao || "Empresa júnior cadastrada na federação.",
     sobre: empresa.sobre || empresa.descricao || "",
-    responsavel: empresa.responsavel || empresa.responsavelNome || "Não informado",
+    responsavel: empresa.responsavel?.nome || empresa.responsavelNome || "Não informado",
     integrantes: empresa.integrantes ?? empresa.membros ?? colaboradores.length,
     colaboradores,
     servicos: Array.isArray(servicos) ? servicos : [servicos].filter(Boolean),

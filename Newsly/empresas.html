@@ -128,6 +128,8 @@
             <template x-for="empresa in empresasFiltradas()" :key="empresa.id">
                 <article class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition relative" >
                     <span class="absolute top-4 right-4 bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-full font-medium" x-text="empresa.ano"></span>
+                    <img :src="empresa.logo" :alt="`Logo da ${empresa.nome}`" @error="$event.target.src = '../static/Union.svg'"
+                        class="mb-4 h-16 w-16 rounded-xl border border-gray-100 bg-white object-contain p-2">
                     <h3 class="text-xl font-bold text-gray-900 mb-2 mt-2" :aria-label="empresa.nome">
                         <a :href="`empresa.html?id=${empresa.id}`" :aria-label="`Ver detalhes de ${empresa.nome}`" class="after:absolute after:inset-0 focus:outline-none">
                             <span class="sr-only">Ver detalhes de </span><span x-text="empresa.nome">Empresa</span>

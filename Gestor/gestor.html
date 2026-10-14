@@ -6,6 +6,7 @@
     <title>Gestor de EJs - Painel da Federação</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="../script/script.js"></script>
+    <script src="../script/api.js"></script>
     <script defer src="../script/app.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
@@ -30,6 +31,12 @@
                         :class="currentTab === 'painel' ? 'bg-indigo-50 text-indigo-600 font-medium' : 'text-gray-600 hover:bg-gray-50'"
                         class="w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors flex items-center gap-3">
                         <span>Painel</span>
+                    </button>
+                    <button @click="currentTab = 'solicitacoes'"
+                        :class="currentTab === 'solicitacoes' ? 'bg-indigo-50 text-indigo-600 font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                        class="w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors flex items-center gap-3">
+                        <span>Solicitações</span>
+                        <span x-show="solicitacoes.length" class="ml-auto rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800" x-text="solicitacoes.length"></span>
                     </button>
                     <button @click="currentTab = 'ejs'" 
                         :class="currentTab === 'ejs' ? 'bg-indigo-50 text-indigo-600 font-medium' : 'text-gray-600 hover:bg-gray-50'"
@@ -60,21 +67,56 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                         <p class="text-sm font-medium text-gray-500">Total de EJs</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-2">5</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2" x-text="empresas.length"></p>
                     </div>
                     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                        <p class="text-sm font-medium text-gray-500">EJs aprovadas</p>
-                        <p class="text-3xl font-bold text-emerald-600 mt-2">3</p>
+                        <p class="text-sm font-medium text-gray-500">Colaboradores</p>
+                        <p class="text-3xl font-bold text-emerald-600 mt-2" x-text="totalColaboradores"></p>
                     </div>
                     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                        <p class="text-sm font-medium text-gray-500">Pendentes</p>
-                        <p class="text-3xl font-bold text-amber-500 mt-2">4</p>
+                        <p class="text-sm font-medium text-gray-500">Diretorias</p>
+                        <p class="text-3xl font-bold text-amber-500 mt-2" x-text="totalDiretorias"></p>
                     </div>
                     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                         <p class="text-sm font-medium text-gray-500">Notícias</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-2">5</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2" x-text="noticias.length"></p>
                     </div>
                 </div>
+
+                <section x-show="sessaoGestorValida" class="mb-8 rounded-xl border border-rose-200 bg-white p-6 shadow-sm"
+                    aria-labelledby="deduplicacao-title">
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-rose-700">Manutenção de usuários</p>
+                            <h2 id="deduplicacao-title" class="mt-1 text-lg font-bold text-gray-900">Remover usuários duplicados</h2>
+                            <p class="mt-1 max-w-2xl text-sm text-gray-600">
+                                Compara nomes sem diferenciar maiúsculas e minúsculas. Mantém o menor ID e exclui permanentemente os registros duplicados.
+                            </p>
+                        </div>
+                        <button type="button" @click="deduplicarUsuarios()"
+                            :disabled="deduplicandoUsuarios"
+                            class="shrink-0 rounded-lg bg-rose-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-800 disabled:cursor-wait disabled:opacity-60"
+                            x-text="deduplicandoUsuarios ? 'Processando...' : 'Deduplicar usuários'">
+                        </button>
+                    </div>
+                    <p x-show="erroDeduplicacao" x-text="erroDeduplicacao"
+                        class="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-800" role="alert" aria-live="assertive"></p>
+                    <div x-show="resultadoDeduplicacao" class="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4"
+                        role="status" aria-live="polite">
+                        <p class="text-sm font-medium text-gray-800" x-text="resultadoDeduplicacao?.mensagem"></p>
+                        <p class="mt-1 text-sm text-gray-600"
+                            x-text="`${resultadoDeduplicacao?.totalRemovidos || 0} usuário(s) removido(s)`"></p>
+                        <ul x-show="resultadoDeduplicacao?.usuariosRemovidos?.length"
+                            class="mt-3 space-y-1 border-t border-gray-200 pt-3 text-sm text-gray-600">
+                            <template x-for="usuario in (resultadoDeduplicacao?.usuariosRemovidos || [])" :key="usuario.id">
+                                <li>
+                                    <span class="font-medium text-gray-800" x-text="usuario.nome || 'Nome não informado'"></span>
+                                    <span x-text="` · ID ${usuario.id} · ${usuario.tipo || 'USUARIO'}${usuario.email ? ' · ' + usuario.email : ''}`"></span>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </section>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm lg:col-span-2">
@@ -86,52 +128,22 @@
                             <table class="w-full text-left text-sm text-gray-600">
                                 <thead class="bg-gray-50 text-gray-700 text-xs uppercase font-semibold">
                                     <tr>
-                                        <th class="p-3">Sigla</th>
-                                        <th class="p-3">Nome / Localização</th>
-                                        <th class="p-3 text-right">Status</th>
+                                        <th class="p-3">Empresa</th>
+                                        <th class="p-3">CNPJ</th>
+                                        <th class="p-3 text-right">Membros</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-100">
-                                    <tr>
-                                        <td class="p-3 font-bold text-indigo-600">NJ</td>
-                                        <td class="p-3">
-                                            <div class="font-medium text-gray-900">Seeds</div>
-                                            <div class="text-xs text-gray-400">Inovação e Tecnologia</div>
-                                        </td>
-                                        <td class="p-3 text-right"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700">Aprovada</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-3 font-bold text-indigo-600">Ej</td>
-                                        <td class="p-3">
-                                            <div class="font-medium text-gray-900">Edificare</div>
-                                            <div class="text-xs text-gray-400">Engenharia Civil</div>
-                                        </td>
-                                        <td class="p-3 text-right"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700">Aprovada</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-3 font-bold text-indigo-600">EJ</td>
-                                        <td class="p-3">
-                                            <div class="font-medium text-gray-900">Faro Comunicações</div>
-                                            <div class="text-xs text-gray-400">Publicidade e Propaganda</div>
-                                        </td>
-                                        <td class="p-3 text-right"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700">Aprovada</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-3 font-bold text-indigo-600">EJ</td>
-                                        <td class="p-3">
-                                            <div class="font-medium text-gray-900">Valor</div>
-                                            <div class="text-xs text-gray-400">Administração</div>
-                                        </td>
-                                        <td class="p-3 text-right"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-50 text-amber-700">Pendente</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-3 font-bold text-indigo-600">EJ</td>
-                                        <td class="p-3">
-                                            <div class="font-medium text-gray-900">Fonotec</div>
-                                            <div class="text-xs text-gray-400">Fonoaudologia</div>
-                                        </td>
-                                        <td class="p-3 text-right"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-red-50 text-red-700">Rejeitada</span></td>
-                                    </tr>
+                                    <template x-for="empresa in empresas.slice(0, 5)" :key="empresa.id">
+                                        <tr>
+                                            <td class="p-3 font-medium text-gray-900" x-text="empresa.nome"></td>
+                                            <td class="p-3 text-xs" x-text="empresa.cnpj || 'Não informado'"></td>
+                                            <td class="p-3 text-right" x-text="empresa.colaboradores.length"></td>
+                                        </tr>
+                                    </template>
+                                    <tr x-show="carregando"><td colspan="3" class="p-3 text-center text-gray-500">Carregando empresas...</td></tr>
+                                    <tr x-show="!carregando && erroEmpresas"><td colspan="3" class="p-3 text-center text-red-700" role="alert" aria-live="polite"><span x-text="erroEmpresas"></span> <button type="button" @click="carregarDados()" class="ml-2 font-semibold underline" :disabled="carregando">Tentar novamente</button></td></tr>
+                                    <tr x-show="!carregando && !erroEmpresas && empresas.length === 0"><td colspan="3" class="p-3 text-center text-gray-500">Nenhuma empresa cadastrada.</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -139,40 +151,75 @@
 
                     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-gray-900">Notícias aguardando aprovação</h3>
-                            <button @click="currentTab = 'noticias'" class="text-xs text-indigo-600 hover:underline font-medium">Ver todas</button>
+                            <h3 class="font-bold text-gray-900">Solicitações pendentes</h3>
+                            <button @click="currentTab = 'solicitacoes'" class="text-xs text-indigo-600 hover:underline font-medium">Abrir fila</button>
                         </div>
                         <div class="space-y-4">
-                            <div class="p-3 border border-gray-100 rounded-lg bg-gray-50">
-                                <div class="flex justify-between items-start mb-1">
-                                    <span class="text-[10px] uppercase font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">Projeto</span>
-                                    <span class="text-xs text-gray-400">19 jan 2025</span>
+                            <template x-for="solicitacao in solicitacoes.slice(0, 3)" :key="solicitacao.id">
+                                <div class="p-3 border border-gray-100 rounded-lg bg-gray-50">
+                                    <div class="flex justify-between items-start mb-1">
+                                        <span class="text-[10px] uppercase font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded" x-text="solicitacao.status"></span>
+                                        <span class="text-xs text-gray-400" x-text="solicitacao.criadaEm ? new Date(solicitacao.criadaEm).toLocaleDateString('pt-BR') : ''"></span>
+                                    </div>
+                                    <h4 class="text-sm font-semibold text-gray-900" x-text="solicitacao.noticiaTitulo"></h4>
+                                    <p class="text-xs text-gray-500 mt-1" x-text="solicitacao.responsavelNome"></p>
                                 </div>
-                                <h4 class="text-sm font-semibold text-gray-900 truncate">Projeto com StartupXYZ foi concluído</h4>
-                                <p class="text-xs text-gray-500 mt-1">Impacto Consultoria Júnior</p>
-                            </div>
-
-                            <div class="p-3 border border-gray-100 rounded-lg bg-gray-50">
-                                <div class="flex justify-between items-start mb-1">
-                                    <span class="text-[10px] uppercase font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">Capacitação</span>
-                                    <span class="text-xs text-gray-400">27 jan 2025</span>
-                                </div>
-                                <h4 class="text-sm font-semibold text-gray-900 truncate">Workshop de Design Thinking</h4>
-                                <p class="text-xs text-gray-500 mt-1">Nexus Júnior</p>
-                            </div>
-
-                            <div class="p-3 border border-gray-100 rounded-lg bg-gray-50">
-                                <div class="flex justify-between items-start mb-1">
-                                    <span class="text-[10px] uppercase font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">Evento</span>
-                                    <span class="text-xs text-gray-400">10 fev 2025</span>
-                                </div>
-                                <h4 class="text-sm font-semibold text-gray-900 truncate">Encontro Regional de EJs</h4>
-                                <p class="text-xs text-gray-500 mt-1">Lex Júnior</p>
-                            </div>
+                            </template>
+                            <p x-show="carregandoSolicitacoes" class="text-sm text-gray-500">Carregando solicitações...</p>
+                            <div x-show="erroSolicitacoes" class="text-sm text-red-700" role="alert" aria-live="polite"><p x-text="erroSolicitacoes"></p><button type="button" @click="carregarSolicitacoes()" class="mt-1 font-semibold underline" :disabled="carregandoSolicitacoes">Tentar novamente</button></div>
+                            <p x-show="!carregandoSolicitacoes && !erroSolicitacoes && solicitacoes.length === 0" class="text-sm text-gray-500">Nenhuma solicitação pendente.</p>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <section x-show="currentTab === 'solicitacoes'" style="display: none;" aria-labelledby="solicitacoes-title">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                    <div>
+                        <p class="text-xs font-semibold text-indigo-600 tracking-wider uppercase">Análise</p>
+                        <h1 id="solicitacoes-title" class="text-2xl font-bold text-gray-900">Solicitações de publicação</h1>
+                        <p class="mt-1 text-sm text-gray-500">Revise os pedidos enviados para sua análise.</p>
+                    </div>
+                    <!-- <button type="button" @click="carregarSolicitacoes()" :disabled="carregandoSolicitacoes || !sessaoGestorValida" class="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg transition-colors shadow-sm disabled:opacity-50">
+                        <span x-text="carregandoSolicitacoes ? 'Atualizando...' : 'Atualizar fila'"></span>
+                    </button> -->
+                </div>
+
+                <div x-show="!sessaoGestorValida" class="mb-5 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" role="alert" aria-live="assertive">
+                    <p>Entre com uma conta de gestor para consultar e responder às solicitações.</p>
+                    <a href="../Newsly/login.html" class="mt-2 inline-block font-semibold underline">Ir para o login</a>
+                </div>
+                <p x-show="mensagemSolicitacoes" x-text="mensagemSolicitacoes" class="mb-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800" role="status" aria-live="polite"></p>
+                <div x-show="erroSolicitacoes && sessaoGestorValida" class="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-800" role="alert" aria-live="assertive">
+                    <p x-text="erroSolicitacoes"></p>
+                    <button type="button" @click="carregarSolicitacoes()" :disabled="carregandoSolicitacoes" class="mt-2 font-semibold underline disabled:opacity-50">Tentar novamente</button>
+                </div>
+                <p x-show="carregandoSolicitacoes && sessaoGestorValida" class="py-6 text-sm text-gray-500">Carregando sua fila...</p>
+
+                <div class="space-y-4">
+                    <template x-for="solicitacao in solicitacoes" :key="solicitacao.id">
+                        <article class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                                <div class="min-w-0">
+                                    <h2 class="font-semibold text-gray-900" x-text="solicitacao.noticiaTitulo"></h2>
+                                    <p class="mt-1 text-sm text-gray-600">Solicitado por <span class="font-medium" x-text="solicitacao.responsavelNome"></span></p>
+                                    <p class="mt-1 text-xs text-gray-500" x-text="solicitacao.criadaEm ? new Date(solicitacao.criadaEm).toLocaleString('pt-BR') : 'Data não informada'"></p>
+                                </div>
+                                <span class="shrink-0 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800">Pendente</span>
+                            </div>
+                            <div class="mt-4">
+                                <label :for="`motivo-recusa-${solicitacao.id}`" class="block text-xs font-medium text-gray-600 mb-1">Motivo da recusa (opcional)</label>
+                                <textarea :id="`motivo-recusa-${solicitacao.id}`" x-model="motivosRecusa[solicitacao.id]" rows="2" maxlength="500" placeholder="Informe o motivo, se necessário" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                            </div>
+                            <div class="mt-3 flex justify-end gap-2">
+                                <button type="button" @click="recusarSolicitacao(solicitacao.id)" :disabled="solicitacaoEmProcessamento === solicitacao.id" class="rounded-md border border-gray-200 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50" x-text="solicitacaoEmProcessamento === solicitacao.id ? 'Salvando...' : 'Recusar'"></button>
+                                <button type="button" @click="aceitarSolicitacao(solicitacao.id)" :disabled="solicitacaoEmProcessamento === solicitacao.id" class="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50" x-text="solicitacaoEmProcessamento === solicitacao.id ? 'Salvando...' : 'Aceitar'"></button>
+                            </div>
+                        </article>
+                    </template>
+                </div>
+                <p x-show="!carregandoSolicitacoes && !erroSolicitacoes && sessaoGestorValida && solicitacoes.length === 0" class="rounded-lg border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">Não há solicitações aguardando sua análise.</p>
+            </section>
 
             <div x-show="currentTab === 'ejs'" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -186,18 +233,39 @@
                 </div>
 
                 <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                    <div class="flex rounded-lg bg-gray-100 p-0.5 text-xs font-medium">
-                        <button class="bg-white text-gray-900 px-3 py-1.5 rounded-md shadow-sm">Todas</button>
-                        <button class="text-gray-500 hover:text-gray-900 px-3 py-1.5">Aprovadas</button>
-                        <button class="text-gray-500 hover:text-gray-900 px-3 py-1.5">Pendentes</button>
-                        <button class="text-gray-500 hover:text-gray-900 px-3 py-1.5">Rejeitadas</button>
-                    </div>
                     <div class="w-full md:w-64">
-                        <input type="text" placeholder="Buscar EJ, universidade ou área..." class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <label for="busca-empresa" class="sr-only">Buscar empresa</label>
+                        <input id="busca-empresa" type="search" x-model="buscaEmpresa" placeholder="Buscar empresa ou CNPJ..." class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <template x-for="empresa in empresasFiltradas()" :key="empresa.id">
+                        <article class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-start mb-3 gap-3">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <img :src="empresa.logo" :alt="`Logo da ${empresa.nome}`" @error="$event.target.src = '../static/Union.svg'" class="h-10 w-10 shrink-0 rounded-lg border border-gray-100 bg-white object-contain p-1">
+                                        <div class="min-w-0">
+                                            <h3 class="font-bold text-gray-900 text-base" aria-label="Nome da empresa" x-text="empresa.nome"></h3>
+                                            <p class="text-xs text-gray-500" x-text="empresa.cnpj || 'CNPJ não informado'"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-600" x-text="empresa.descricao"></p>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500">
+                                <span x-text="`${empresa.colaboradores.length} colaboradores · ${empresa.diretorias.length} diretorias`"></span>
+                            </div>
+                        </article>
+                    </template>
+                    <p x-show="carregando" class="text-sm text-gray-500">Carregando empresas...</p>
+                    <div x-show="!carregando && erroEmpresas" class="text-sm text-red-700" role="alert" aria-live="polite"><p x-text="erroEmpresas"></p><button type="button" @click="carregarDados()" class="mt-1 font-semibold underline" :disabled="carregando">Tentar novamente</button></div>
+                    <p x-show="!carregando && !erroEmpresas && empresasFiltradas().length === 0" class="text-sm text-gray-500">Nenhuma empresa encontrada.</p>
+                </div>
+
+                <div class="hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-start mb-3">
@@ -313,6 +381,7 @@
                             <span class="text-gray-500 font-medium">contato@pixeljr.com</span>
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
 
@@ -322,23 +391,39 @@
                         <p class="text-xs font-semibold text-indigo-600 tracking-wider uppercase">Sala de Imprensa</p>
                         <h1 class="text-2xl font-bold text-gray-900">Notícias</h1>
                     </div>
-                    <button @click="modalNoticia = true" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg transition-colors shadow-sm">
-                        Nova notícia
+                    <button @click="carregarDados()" :disabled="carregando" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg transition-colors shadow-sm disabled:opacity-50">
+                        <span x-text="carregando ? 'Atualizando...' : 'Atualizar notícias'"></span>
                     </button>
                 </div>
 
                 <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                    <div class="flex rounded-lg bg-gray-100 p-0.5 text-xs font-medium">
-                        <button class="bg-white text-gray-900 px-3 py-1.5 rounded-md shadow-sm">Todas</button>
-                        <button class="text-gray-500 hover:text-gray-900 px-3 py-1.5">Aprovadas</button>
-                        <button class="text-gray-500 hover:text-gray-900 px-3 py-1.5">Pendentes</button>
-                        <button class="text-gray-500 hover:text-gray-900 px-3 py-1.5">Rejeitadas</button>
-                    </div>
                     <div class="w-full md:w-64">
-                        <input type="text" placeholder="Buscar notícia..." class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <label for="busca-noticia" class="sr-only">Buscar notícia</label>
+                        <input id="busca-noticia" type="search" x-model="buscaNoticia" placeholder="Buscar notícia ou empresa..." class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
                 </div>
 
+                <div class="space-y-4">
+                    <template x-for="noticia in noticiasFiltradas()" :key="noticia.id">
+                        <article class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="text-[10px] font-bold uppercase tracking-wider bg-gray-100 text-gray-600 px-2 py-0.5 rounded">Notícia</span>
+                                <span class="text-xs text-gray-400" x-text="noticia.data || 'Data não informada'"></span>
+                            </div>
+                            <h3 class="font-bold text-gray-900 text-base" aria-label="Título da notícia" x-text="noticia.titulo"></h3>
+                            <p class="text-sm text-gray-600 mt-1 whitespace-pre-line line-clamp-3" x-text="noticia.conteudo"></p>
+                            <p class="text-xs font-semibold text-indigo-600 mt-2" x-text="noticia.empresaNome"></p>
+                            <a :href="linkDetalheNoticia(noticia)" class="inline-flex mt-3 text-sm font-semibold text-indigo-700 hover:text-indigo-900 hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-600 rounded">
+                                Ler notícia completa →
+                            </a>
+                        </article>
+                    </template>
+                    <p x-show="carregando" class="text-sm text-gray-500">Carregando notícias...</p>
+                    <div x-show="!carregando && erroNoticias" class="text-sm text-red-700" role="alert" aria-live="polite"><p x-text="erroNoticias"></p><button type="button" @click="carregarDados()" class="mt-1 font-semibold underline" :disabled="carregando">Tentar novamente</button></div>
+                    <p x-show="!carregando && !erroNoticias && noticiasFiltradas().length === 0" class="text-sm text-gray-500">Nenhuma notícia encontrada.</p>
+                </div>
+
+                <div class="hidden">
                 <div class="space-y-4">
                     <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
@@ -412,60 +497,9 @@
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
         </main>
-    </div>
-
-    <div class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" x-show="modalNoticia" style="display: none;" x-transition>
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl relative" @click.away="modalNoticia = false">
-            <button @click="modalNoticia = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
-            
-            <h2 class="text-lg font-bold text-gray-900 mb-1">Nova Notícia</h2>
-            <p class="text-sm text-gray-500 mb-6">Crie uma notícia. Ela entrará como pendente para aprovação.</p>
-            
-            <form class="space-y-4" @submit.prevent="criarNoticiaGestor()">
-                <p x-show="erroNoticia" x-text="erroNoticia" class="rounded-lg bg-red-50 p-3 text-sm text-red-700" role="alert"></p>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Título</label>
-                    <input required type="text" x-model="novaNoticia.titulo" placeholder="Título da notícia" class="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Empresa Júnior</label>
-                        <select class="w-full border border-gray-200 rounded-lg p-2.5 text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <template x-for="empresa in empresas" :key="empresa.id">
-                                <option :value="empresa.id" x-text="empresa.nome"></option>
-                            </template>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Categoria</label>
-                        <select class="w-full border border-gray-200 rounded-lg p-2.5 text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <option value="Institucional">Institucional</option>
-                            <option value="Projeto">Projeto</option>
-                            <option value="Capacitação">Capacitação</option>
-                            <option value="Evento">Evento</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Data</label>
-                    <input type="text" value="09 de jun. de 2026" readonly class="w-full border border-gray-200 rounded-lg p-2.5 text-sm bg-gray-50 text-gray-500 cursor-not-allowed">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Resumo</label>
-                    <textarea required rows="3" x-model="novaNoticia.conteudo" placeholder="Conteúdo da notícia" class="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
-                </div>
-
-                <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                    <button type="button" @click="modalNoticia = false" class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">Cancelar</button>
-                    <button type="submit" :disabled="enviandoNoticia" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm disabled:opacity-50" x-text="enviandoNoticia ? 'Enviando...' : 'Criar notícia'"></button>
-                </div>
-            </form>
-        </div>
     </div>
 
    <div class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" x-show="modalEJ" style="display: none;" x-transition>
@@ -473,26 +507,26 @@
         <button @click="modalEJ = false" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-lg font-bold">&times;</button>
         
         <h2 class="text-base font-bold text-gray-900 mb-1">Nova Empresa Júnior</h2>
-        <p class="text-xs text-gray-500 mb-4">A API persiste somente o nome e o CNPJ da empresa.</p>
+        <p class="text-xs text-gray-500 mb-4">Informe o nome e o CNPJ da empresa.</p>
         
         <form class="space-y-3" @submit.prevent="cadastrarEJ()">
-            <p x-show="erroEJ" x-text="erroEJ" class="rounded-lg bg-red-50 p-2 text-xs text-red-700" role="alert"></p>
+            <p x-show="erroEJ" x-text="erroEJ" class="rounded-lg bg-red-50 p-2 text-xs text-red-700" role="alert" aria-live="assertive"></p>
             <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Nome da EJ</label>
-                <input required type="text" x-model="novaEJ.nome" placeholder="Ex: Nexus Júnior" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <label for="nome-ej" class="block text-xs font-semibold text-gray-700 mb-1">Nome da EJ</label>
+                <input id="nome-ej" required type="text" x-model="novaEJ.nome" placeholder="Ex: Nexus Júnior" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
             </div>
 
             <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">CNPJ</label>
-                <input required type="text" x-model="novaEJ.cnpj" placeholder="00.000.000/0000-00" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <label for="cnpj-ej" class="block text-xs font-semibold text-gray-700 mb-1">CNPJ</label>
+                <input id="cnpj-ej" required type="text" x-model="novaEJ.cnpj" placeholder="00.000.000/0000-00" pattern="\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
             </div>
 
-            <div>
+            <div x-show="false">
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Universidade</label>
                 <input type="text" x-model="novaEJ.universidade" placeholder="Ex: Universidade Federal do Estado" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-3" x-show="false">
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1">Área de atuação</label>
                     <select x-model="novaEJ.area" class="w-full border border-gray-200 rounded-lg p-2 text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
@@ -509,7 +543,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-3" x-show="false">
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1">Presidente</label>
                         <input type="text" x-model="novaEJ.presidente" placeholder="Nome do presidente" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
@@ -520,7 +554,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-3" x-show="false">
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1">Nº de membros</label>
                         <input type="number" min="0" x-model="novaEJ.membros" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
@@ -531,7 +565,7 @@
                 </div>
             </div>
 
-            <div>
+            <div x-show="false">
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Descrição</label>
                 <textarea rows="2" x-model="novaEJ.descricao" placeholder="Breve descrição da atuação da EJ" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
             </div>

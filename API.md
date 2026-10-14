@@ -528,6 +528,46 @@ Adiciona um colaborador à empresa.
 
 ---
 
+## Solicitações de Publicação `/solicitacoes`
+
+O responsável cria a notícia e envia sua solicitação para um gestor específico. O gestor pode aceitar ou recusar solicitações pendentes; o responsável pode cancelar as suas enquanto estiverem pendentes.
+
+### POST `/solicitacoes`
+
+**Request Body:**
+```json
+{
+  "responsavelId": 1,
+  "gestorId": 2,
+  "noticiaId": 3
+}
+```
+
+**Responses:** `201` — `SolicitacaoResponseDTO` / `404` se uma referência não existir / `409` se já houver solicitação pendente para a mesma notícia e gestor.
+
+### PATCH `/solicitacoes/{id}/aceitar`
+Aceita uma solicitação pendente. Somente o gestor destinatário pode executar esta ação.
+
+### PATCH `/solicitacoes/{id}/recusar`
+Recusa uma solicitação pendente. Somente o gestor destinatário pode executar esta ação.
+
+**Request Body (opcional):** `{ "motivoRecusa": "Conteúdo fora do padrão." }`
+
+### PATCH `/solicitacoes/{id}/cancelar`
+Cancela uma solicitação pendente. Somente o responsável que a criou pode executar esta ação.
+
+### GET `/solicitacoes`
+### GET `/solicitacoes/{id}`
+### GET `/solicitacoes/responsavel/{responsavelId}`
+### GET `/solicitacoes/gestor/{gestorId}`
+### GET `/solicitacoes/gestor/{gestorId}/pendentes`
+
+As listagens por responsável e gestor retornam todos os status; a rota `/pendentes` retorna somente solicitações pendentes do gestor.
+
+**SolicitacaoResponseDTO:** `id`, `responsavelId`, `responsavelNome`, `gestorId`, `gestorNome`, `noticiaId`, `noticiaTitulo`, `status`, `criadaEm`, `respondidaEm` (opcional) e `motivoRecusa` (opcional). Os status possíveis são `PENDENTE`, `ACEITA`, `RECUSADA` e `CANCELADA`.
+
+---
+
 ## Comentários `/comentarios`
 
 ### POST `/comentarios`
@@ -633,6 +673,15 @@ Adiciona um colaborador à empresa.
 | `GET` | `/noticias/{id}` | Busca notícia | `200` |
 | `PUT` | `/noticias/{id}` | Atualiza notícia | `200` |
 | `DELETE` | `/noticias/{id}` | Remove notícia | `204` |
+| `POST` | `/solicitacoes` | Envia solicitação de publicação | `201` |
+| `PATCH` | `/solicitacoes/{id}/aceitar` | Gestor aceita solicitação | `200` |
+| `PATCH` | `/solicitacoes/{id}/recusar` | Gestor recusa solicitação | `200` |
+| `PATCH` | `/solicitacoes/{id}/cancelar` | Responsável cancela solicitação | `200` |
+| `GET` | `/solicitacoes` | Lista solicitações | `200` |
+| `GET` | `/solicitacoes/{id}` | Busca solicitação | `200` |
+| `GET` | `/solicitacoes/responsavel/{responsavelId}` | Solicitações do responsável | `200` |
+| `GET` | `/solicitacoes/gestor/{gestorId}` | Solicitações do gestor | `200` |
+| `GET` | `/solicitacoes/gestor/{gestorId}/pendentes` | Pendentes do gestor | `200` |
 | `POST` | `/comentarios` | Cria comentário | `201` |
 | `GET` | `/comentarios` | Lista comentários | `200` |
 | `GET` | `/comentarios/{id}` | Busca comentário | `200` |

@@ -113,40 +113,298 @@ function empresasPage() {
     };
 }
 
+function noticiaDetalhePage() {
+    return {
+        noticia: null,
+        carregando: true,
+        erro: "",
+        origem: "home",
+
+        get linkVoltar() {
+            const destinos = {
+                home: "home.html",
+                noticias: "noticias.html",
+                nexus: "../Empresa/nexus.html?tab=noticias&view=1",
+                gestor: "../Gestor/gestor.html?tab=noticias"
+            };
+            return destinos[this.origem] || destinos.home;
+        },
+
+        async init() {
+            this.carregando = true;
+            this.erro = "";
+            this.noticia = null;
+            const parametros = new URLSearchParams(window.location.search);
+            const id = parametros.get("id");
+            const origem = parametros.get("origem");
+            this.origem = ["home", "noticias", "nexus", "gestor"].includes(origem) ? origem : "home";
+
+            if (!id) {
+                this.erro = "Não foi possível identificar a notícia solicitada.";
+                this.carregando = false;
+                return;
+            }
+
+            try {
+                const resposta = await apiRequest(`/noticias/${encodeURIComponent(id)}`);
+                const noticia = resposta?.noticia || resposta;
+                if (!noticia || typeof noticia !== "object" || Array.isArray(noticia)) {
+                    throw new Error("A API não retornou uma notícia válida.");
+                }
+                this.noticia = normalizarNoticiaApi(noticia);
+                document.title = `${this.noticia.titulo} | Newsly`;
+            } catch (error) {
+                this.erro = /failed to fetch|networkerror|load failed/i.test(error?.message || "")
+                    ? "Não foi possível conectar ao servidor. Verifique se o backend está ativo e tente novamente."
+                    : error?.message || "Não foi possível carregar esta notícia.";
+                console.error("Não foi possível carregar a notícia.", error);
+            } finally {
+                this.carregando = false;
+            }
+        }
+    };
+}
+
 function gestorPage() {
     return {
-        currentTab: "painel",
-        modalNoticia: false,
+        currentTab: "solicitacoes",
         modalEJ: false,
+        carregando: true,
+        erroEmpresas: "",
+        erroNoticias: "",
+        carregandoSolicitacoes: true,
+        erroSolicitacoes: "",
+        mensagemSolicitacoes: "",
+        solicitacaoEmProcessamento: null,
+        buscaEmpresa: "",
+        buscaNoticia: "",
+        motivosRecusa: {},
         enviandoEJ: false,
         erroEJ: "",
-        enviandoNoticia: false,
-        erroNoticia: "",
+        deduplicandoUsuarios: false,
+        erroDeduplicacao: "",
+        resultadoDeduplicacao: null,
+        gestor: null,
         empresas: [],
-        novaNoticia: {
-            titulo: "",
-            empresaId: "",
-            conteudo: ""
-        },
+        noticias: [],
+        solicitacoes: [],
         novaEJ: {
             nome: "",
-            cnpj: "",
-            universidade: "",
-            area: "Consultoria",
-            cidade: "",
-            presidente: "",
-            email: "",
-            membros: 0,
-            ano: "",
-            descricao: ""
+            cnpj: ""
         },
 
         async init() {
             try {
-                this.empresas = await buscarEmpresas();
-                if (this.empresas.length) this.novaNoticia.empresaId = this.empresas[0].id;
+                this.gestor = JSON.parse(localStorage.getItem("user") || "null");
             } catch (error) {
-                console.error(error);
+                this.erroSolicitacoes = "Não foi possível ler a sessão. Entre novamente.";
+            }
+            if (new URLSearchParams(window.location.search).get("tab") === "noticias") {
+                this.currentTab = "noticias";
+            }
+            await this.carregarDados();
+        },
+
+        get sessaoGestorValida() {
+            const tipo = (this.gestor?.tipo || this.gestor?.role || "").toUpperCase();
+            return tipo === "GESTOR" && Number.isFinite(Number(this.gestor?.id)) && Number(this.gestor.id) > 0;
+        },
+
+        linkDetalheNoticia(noticia) {
+            return noticia?.id
+                ? `../Newsly/noticia.html?id=${encodeURIComponent(noticia.id)}&origem=gestor`
+                : "../Newsly/noticias.html";
+        },
+
+        normalizarListaSolicitacoes(resultado) {
+            const lista = Array.isArray(resultado) ? resultado : resultado?.content || [];
+            if (!this.sessaoGestorValida || !Array.isArray(lista)) return [];
+
+            return lista.filter(solicitacao =>
+                solicitacao.status === "PENDENTE" &&
+                String(solicitacao.gestorId) === String(this.gestor.id)
+            );
+        },
+
+        mensagemErro(error, fallback) {
+            const detalhe = error?.message || "";
+            if (/failed to fetch|networkerror|load failed/i.test(detalhe)) {
+                return "Não foi possível conectar ao servidor. Verifique se o backend está ativo e tente novamente.";
+            }
+            if (/\b(400|422)\b/.test(detalhe)) {
+                return `Confira os dados informados. ${detalhe}`;
+            }
+            if (/\b(409)\b/.test(detalhe)) {
+                return `Este registro já existe ou não pode ser cadastrado nessa situação. ${detalhe}`;
+            }
+            if (/\b(404)\b/.test(detalhe)) {
+                return `O recurso solicitado não foi encontrado. ${detalhe}`;
+            }
+            return detalhe || fallback;
+        },
+
+        get totalColaboradores() {
+            return this.empresas.reduce((total, empresa) => total + empresa.colaboradores.length, 0);
+        },
+
+        get totalDiretorias() {
+            return this.empresas.reduce((total, empresa) => total + empresa.diretorias.length, 0);
+        },
+
+        empresasFiltradas() {
+            const termo = this.buscaEmpresa.trim().toLowerCase();
+            if (!termo) return this.empresas;
+
+            return this.empresas.filter(empresa =>
+                [empresa.nome, empresa.cnpj].join(" ").toLowerCase().includes(termo)
+            );
+        },
+
+        noticiasFiltradas() {
+            const termo = this.buscaNoticia.trim().toLowerCase();
+            if (!termo) return this.noticias;
+
+            return this.noticias.filter(noticia =>
+                [noticia.titulo, noticia.conteudo, noticia.empresaNome]
+                    .join(" ")
+                    .toLowerCase()
+                    .includes(termo)
+            );
+        },
+
+        async carregarDados() {
+            this.carregando = true;
+            this.erroEmpresas = "";
+            this.erroNoticias = "";
+
+            const [empresasResult, noticiasResult, solicitacoesResult] = await Promise.allSettled([
+                buscarEmpresas(),
+                apiRequest("/noticias"),
+                this.sessaoGestorValida
+                    ? api.solicitacoes.pendentesPorGestor(this.gestor.id)
+                    : Promise.reject(new Error("Entre com uma conta de gestor para consultar as solicitações."))
+            ]);
+
+            if (empresasResult.status === "fulfilled") {
+                this.empresas = empresasResult.value;
+            } else {
+                this.erroEmpresas = this.mensagemErro(empresasResult.reason, "Não foi possível carregar as empresas.");
+            }
+
+            if (noticiasResult.status === "fulfilled") {
+                const data = noticiasResult.value;
+                const lista = Array.isArray(data) ? data : data?.content || data?.noticias || [];
+                this.noticias = lista.map(noticia => {
+                    const normalizada = normalizarNoticiaApi(noticia);
+                    const empresa = this.empresas.find(item => String(item.id) === String(normalizada.empresaId));
+                    return { ...normalizada, empresaNome: noticia.empresaNome || empresa?.nome || "Empresa não informada" };
+                });
+            } else {
+                this.erroNoticias = this.mensagemErro(noticiasResult.reason, "Não foi possível carregar as notícias.");
+            }
+
+            if (solicitacoesResult.status === "fulfilled") {
+                this.solicitacoes = this.normalizarListaSolicitacoes(solicitacoesResult.value);
+                this.erroSolicitacoes = "";
+            } else {
+                this.solicitacoes = [];
+                this.erroSolicitacoes = this.mensagemErro(solicitacoesResult.reason, "Não foi possível carregar as solicitações.");
+            }
+
+            this.carregando = false;
+            this.carregandoSolicitacoes = false;
+        },
+
+        async carregarSolicitacoes() {
+            if (!this.sessaoGestorValida) {
+                this.erroSolicitacoes = "Entre com uma conta de gestor para consultar as solicitações.";
+                return;
+            }
+
+            this.carregandoSolicitacoes = true;
+            this.erroSolicitacoes = "";
+            try {
+                const resultado = await api.solicitacoes.pendentesPorGestor(this.gestor.id);
+                this.solicitacoes = this.normalizarListaSolicitacoes(resultado);
+                this.erroSolicitacoes = "";
+            } catch (error) {
+                this.erroSolicitacoes = this.mensagemErro(error, "Não foi possível carregar as solicitações.");
+            } finally {
+                this.carregandoSolicitacoes = false;
+            }
+        },
+
+        async deduplicarUsuarios() {
+            this.erroDeduplicacao = "";
+            this.resultadoDeduplicacao = null;
+
+            if (!this.sessaoGestorValida) {
+                this.erroDeduplicacao = "Entre com uma conta de gestor para deduplicar usuários.";
+                return;
+            }
+
+            if (this.deduplicandoUsuarios) return;
+
+            const confirmado = window.confirm(
+                "Esta ação excluirá permanentemente usuários com nomes repetidos, mantendo apenas o registro de menor ID. Deseja continuar?"
+            );
+            if (!confirmado) return;
+
+            this.deduplicandoUsuarios = true;
+            try {
+                const resultado = await api.gestores.deduplicarUsuarios();
+                this.resultadoDeduplicacao = {
+                    totalRemovidos: Number(resultado?.totalRemovidos) || 0,
+                    usuariosRemovidos: Array.isArray(resultado?.usuariosRemovidos)
+                        ? resultado.usuariosRemovidos
+                        : [],
+                    mensagem: resultado?.mensagem || "Deduplicação concluída."
+                };
+            } catch (error) {
+                if (error?.status === 409) {
+                    this.resultadoDeduplicacao = {
+                        totalRemovidos: 0,
+                        usuariosRemovidos: [],
+                        mensagem: error.message || "Nenhuma duplicata de usuário encontrada."
+                    };
+                } else {
+                    this.erroDeduplicacao = this.mensagemErro(
+                        error,
+                        "Não foi possível deduplicar os usuários."
+                    );
+                }
+            } finally {
+                this.deduplicandoUsuarios = false;
+            }
+        },
+
+        async aceitarSolicitacao(solicitacaoId) {
+            await this.responderSolicitacao(solicitacaoId, "ACEITA");
+        },
+
+        async recusarSolicitacao(solicitacaoId) {
+            await this.responderSolicitacao(solicitacaoId, "RECUSADA");
+        },
+
+        async responderSolicitacao(solicitacaoId, decisao) {
+            this.erroSolicitacoes = "";
+            this.mensagemSolicitacoes = "";
+            this.solicitacaoEmProcessamento = solicitacaoId;
+
+            try {
+                if (decisao === "ACEITA") {
+                    await api.solicitacoes.aceitar(solicitacaoId);
+                    this.mensagemSolicitacoes = "Solicitação aceita.";
+                } else {
+                    await api.solicitacoes.recusar(solicitacaoId, this.motivosRecusa[solicitacaoId]?.trim());
+                    this.mensagemSolicitacoes = "Solicitação recusada.";
+                    delete this.motivosRecusa[solicitacaoId];
+                }
+                await this.carregarSolicitacoes();
+            } catch (error) {
+                this.erroSolicitacoes = this.mensagemErro(error, "Não foi possível atualizar a solicitação.");
+            } finally {
+                this.solicitacaoEmProcessamento = null;
             }
         },
 
@@ -160,67 +418,54 @@ function gestorPage() {
             };
 
             try {
-                const criada = await apiRequest("/empresas", {
+                await apiRequest("/empresas", {
                     method: "POST",
                     body: JSON.stringify(payload)
                 });
+                await this.carregarDados();
 
                 this.modalEJ = false;
-                this.novaEJ = {
-                    nome: "", cnpj: "", universidade: "", area: "Consultoria", cidade: "",
-                    presidente: "", email: "", membros: 0, ano: "", descricao: ""
-                };
-                alert(`Empresa ${criada?.nome || payload.nome} cadastrada com sucesso.`);
+                this.novaEJ = { nome: "", cnpj: "" };
             } catch (error) {
-                this.erroEJ = "Não foi possível cadastrar a empresa. Verifique se o backend está ativo.";
+                this.erroEJ = this.mensagemErro(error, "Não foi possível cadastrar a empresa.");
                 console.error(error);
             } finally {
                 this.enviandoEJ = false;
-            }
-        },
-
-        async criarNoticiaGestor() {
-            this.erroNoticia = "";
-            this.enviandoNoticia = true;
-            const payload = {
-                titulo: this.novaNoticia.titulo.trim(),
-                conteudo: this.novaNoticia.conteudo.trim(),
-                publicadaEm: new Date().toISOString().slice(0, 19),
-                empresaId: Number(this.novaNoticia.empresaId)
-            };
-
-            try {
-                await apiRequest("/noticias", {
-                    method: "POST",
-                    body: JSON.stringify(payload)
-                });
-                this.modalNoticia = false;
-                this.novaNoticia = { titulo: "", empresaId: this.empresas[0]?.id || "", conteudo: "" };
-                alert("Notícia criada com sucesso.");
-            } catch (error) {
-                this.erroNoticia = error.message || "Não foi possível criar a notícia.";
-            } finally {
-                this.enviandoNoticia = false;
             }
         }
     };
 }
 
 function normalizarNoticiaApi(noticia = {}) {
+    const titulo = noticia.titulo || noticia.title || "Sem título";
+    const conteudo = noticia.conteudo || noticia.descricao || noticia.content || noticia.description || "";
+    const categoria = noticia.categoria || noticia.tipo || noticia.category || "Notícia";
+    const publicadaEm = noticia.publicadaEm || noticia.publicadoEm || noticia.dataPublicacao ||
+        noticia.data || noticia.createdAt || noticia.created_at || "";
+    const dataPublicacao = publicadaEm ? new Date(publicadaEm) : null;
+    const imagemUrl = [noticia.imagemUrl, noticia.imagem, noticia.imageUrl, noticia.image]
+        .find(valor => typeof valor === "string" && valor.trim()) || "";
+    const empresa = noticia.empresa && typeof noticia.empresa === "object" ? noticia.empresa : {};
+    const autor = noticia.autor && typeof noticia.autor === "object" ? noticia.autor.nome : noticia.autor;
+    const imagem = imagemUrl.startsWith("/") ? `${API_BASE_URL}${imagemUrl}` : imagemUrl;
+
     return {
-        id: noticia.id,
-        titulo: noticia.titulo || "Sem título",
-        conteudo: noticia.conteudo || noticia.descricao || "",
-        descricao: noticia.conteudo || noticia.descricao || "",
-        categoria: noticia.categoria || "Institucional",
-        tipo: noticia.categoria || "Institucional",
-        data: noticia.publicadaEm
-            ? new Date(noticia.publicadaEm).toLocaleDateString("pt-BR")
+        ...noticia,
+        id: noticia.id ?? noticia.noticiaId,
+        titulo,
+        conteudo: typeof conteudo === "string" ? conteudo : "",
+        descricao: typeof conteudo === "string" ? conteudo : "",
+        categoria,
+        tipo: categoria,
+        data: dataPublicacao && !Number.isNaN(dataPublicacao.getTime())
+            ? dataPublicacao.toLocaleDateString("pt-BR")
             : "",
-        publicadaEm: noticia.publicadaEm,
-        empresaId: noticia.empresaId,
-        empresaNome: noticia.empresaNome || "Empresa",
-        img: noticia.imagem || "../static/Union.svg",
+        publicadaEm,
+        empresaId: noticia.empresaId ?? empresa.id ?? empresa.empresaId,
+        empresaNome: noticia.empresaNome || empresa.nome || empresa.name || "",
+        imagemUrl,
+        img: imagem || "../static/Union.svg",
+        autor: typeof autor === "string" ? autor : noticia.autorNome || "",
         tempo: ""
     };
 }
@@ -231,6 +476,12 @@ function homePage() {
         noticias: [],
         carregando: true,
         erro: "",
+
+        linkDetalheNoticia(noticia) {
+            return noticia?.id
+                ? `noticia.html?id=${encodeURIComponent(noticia.id)}&origem=home`
+                : "noticias.html";
+        },
 
         async init() {
             try {
@@ -284,6 +535,12 @@ function noticiasPublicasPage() {
         carregando: true,
         erro: "",
         noticias: [],
+
+        linkDetalheNoticia(noticia) {
+            return noticia?.id
+                ? `noticia.html?id=${encodeURIComponent(noticia.id)}&origem=noticias`
+                : "noticias.html";
+        },
 
         async init() {
             try {

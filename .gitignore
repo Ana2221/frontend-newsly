@@ -1,0 +1,10 @@
+# Test files and directories
+tests/
+**/tests/
+**/__tests__/
+*.test.*
+*.spec.*
+
+# Markdown files
+*.md
+*.MD
