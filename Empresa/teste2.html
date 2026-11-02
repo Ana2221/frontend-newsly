@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nite Jr — Fale com a gente</title>
     <meta name="description"
-        content="Nite Jr, empresa júnior de tecnologia da UFMA especializada em soluções de software. Entre em contato para iniciar seu projeto." />
+        content="Nite Jr, empresa júnior de tecnologia especializada em soluções de software. Entre em contato para iniciar seu projeto." />
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -62,7 +62,7 @@
                 </span>
 
                 <h1 class="mt-6 text-4xl font-extrabold tracking-tight text-balance lg:text-5xl">
-                    Vamos construir seu próximo <span class="text-brand">projeto de inovação</span>
+                    Vamos construir seu próximo <span class="text-brand">passo</span>
                 </h1>
 
                 <!-- Cartões de contato -->
@@ -133,21 +133,21 @@
                             <path d="M20 6 9 17l-5-5" />
                         </svg>
                     </div>
-                    <h2 class="mt-5 text-2xl font-bold">Mensagem enviada!</h2>
+                    <h2 class="mt-5 text-2xl font-bold">Empresa cadastrada!</h2>
                     <p class="mt-2 max-w-sm text-slate-600">
-                        Obrigado, <span class="font-semibold" x-text="form.nome"></span>. A equipe da Nite Jr entrará em
-                        contato pelo e-mail informado.
+                        A empresa <span class="font-semibold" x-text="form.nome"></span> foi cadastrada. Acesse o painel
+                        para carregar e gerenciar os dados da empresa.
                     </p>
-                    <button type="button" @click="resetar()"
-                        class="mt-6 rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold transition hover:bg-slate-50">
-                        Enviar outra mensagem
-                    </button>
+                    <a href="nexus.html"
+                        class="mt-6 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-dark">
+                        Acessar painel da empresa
+                    </a>
                 </div>
 
                 <!-- Formulário -->
                 <form x-show="!enviado" @submit.prevent="enviar()" class="space-y-5" novalidate>
                     <div>
-                        <h2 class="text-2xl font-bold">Solicite um orçamento</h2>
+                        <h2 class="text-2xl font-bold">Cadastre sua empresa</h2>
                         <p class="mt-1 text-sm text-slate-500">Preencha os dados abaixo e retornaremos em breve.</p>
                     </div>
 
@@ -166,7 +166,7 @@
                         <label for="cnpj" class="mb-1.5 block text-sm font-semibold">CNPJ</label>
                         <input id="cnpj" type="text" inputmode="numeric" x-model="form.cnpj"
                             @input="form.cnpj = mascaraCnpj($event.target.value); erros.cnpj = ''"
-                            placeholder="00.000.000/0000-00" maxlength="18"
+                            placeholder="00.000.000/0000-00" maxlength="18" required
                             class="w-full rounded-xl border bg-white px-4 py-3 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
                             :class="erros.cnpj ? 'border-red-400' : 'border-slate-300'" />
                         <p x-show="erros.cnpj" x-cloak class="mt-1 text-xs text-red-500" x-text="erros.cnpj"></p>
@@ -258,6 +258,25 @@
                         .replace(/(\d{4})(\d)/, '$1-$2');
                 },
 
+                cnpjValido(cnpj) {
+                    const digitos = cnpj.replace(/\D/g, '');
+                    if (digitos.length !== 14 || /^(\d)\1{13}$/.test(digitos)) return false;
+
+                    const calcularDigito = (base) => {
+                        const pesos = base.length === 12
+                            ? [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+                            : [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+                        const soma = [...base].reduce((total, digito, indice) =>
+                            total + Number(digito) * pesos[indice], 0);
+                        const resto = soma % 11;
+                        return resto < 2 ? 0 : 11 - resto;
+                    };
+
+                    const primeiroDigito = calcularDigito(digitos.slice(0, 12));
+                    const segundoDigito = calcularDigito(digitos.slice(0, 13));
+                    return digitos.endsWith(`${primeiroDigito}${segundoDigito}`);
+                },
+
                 mascaraTelefone(v) {
                     v = v.replace(/\D/g, '').slice(0, 11);
                     if (v.length > 6) return v.replace(/^(\d{2})(\d{5})(\d{0,4}).*/, '($1) $2-$3');
@@ -270,19 +289,47 @@
                     this.erros = { nome: '', cnpj: '', telefone: '', email: '', descricao: '', cor: '' };
                     let ok = true;
                     if (!this.form.nome.trim()) { this.erros.nome = 'Informe o nome.'; ok = false; }
-                    if (this.form.cnpj.replace(/\D/g, '').length !== 14) { this.erros.cnpj = 'CNPJ inválido.'; ok = false; }
+                    if (!this.cnpjValido(this.form.cnpj)) {
+                        this.erros.cnpj = 'Informe um CNPJ válido, com 14 dígitos verificadores corretos.';
+                        ok = false;
+                    }
+                    if (!this.form.email.trim()) { this.erros.email = 'Informe o e-mail de contato.'; ok = false; }
                     return ok;
                 },
                 async enviar() {
                     if (!this.validar()) return;
-                    await apiRequest('/empresas', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            nome: this.form.nome.trim(),
-                            cnpj: this.form.cnpj.trim()
-                        })
-                    });
-                    this.enviado = true;
+                    try {
+                        const usuario = JSON.parse(localStorage.getItem('user') || 'null');
+                        const responsavelId = Number(usuario?.id);
+                        if (!Number.isSafeInteger(responsavelId) || responsavelId <= 0) {
+                            throw new Error('Faça login com uma conta de responsável para enviar a solicitação.');
+                        }
+
+                        const empresa = await apiRequest('/empresas', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                nome: this.form.nome.trim(),
+                                cnpj: this.form.cnpj.trim(),
+                                contato : {
+                                    telefone: this.form.telefone.trim(),
+                                    email: this.form.email.trim()
+                                },
+                                responsavelId,
+                            })
+                        });
+                        const empresaId = empresa?.id ?? empresa?.empresaId;
+                        if (empresaId == null || String(empresaId).trim() === '') {
+                            throw new Error('A empresa foi cadastrada, mas a API não retornou o ID para carregá-la. Entre novamente para atualizar sua sessão.');
+                        }
+
+                        usuario.empresaId = empresaId;
+                        usuario.empresa = { ...(empresa || {}), id: empresaId };
+                        localStorage.setItem('user', JSON.stringify(usuario));
+                        this.enviado = true;
+                    } catch (error) {
+                        console.error('Não foi possível enviar a solicitação.', error);
+                        alert(error.message || 'Não foi possível enviar a solicitação.');
+                    }
                 },
 
                 resetar() {

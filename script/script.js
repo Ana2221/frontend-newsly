@@ -1,15 +1,83 @@
 const API_BASE_URL = "http://localhost:8080";
+const AUTH_SESSION_KEY = "newsly.auth";
 
 async function apiRequest(path, options = {}) {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {})
+  const url = new URL(path, `${API_BASE_URL}/`);
+  const isLoginRequest = url.pathname === "/usuarios/login";
+  const headers = new Headers(options.headers || {});
+
+  if (options.body !== undefined && !(options.body instanceof FormData) && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  if (url.origin === new URL(API_BASE_URL).origin && !isLoginRequest) {
+    const sessao = obterSessaoAuth();
+    if (sessao) {
+      headers.set("Authorization", `${sessao.tokenType} ${sessao.accessToken}`);
     }
+  }
+
+  const response = await fetch(url.href, {
+    ...options,
+    headers
   });
 
-  return respostaDaApi(response);
+  return respostaDaApi(response, { limparSessaoEm401: !isLoginRequest });
+}
+
+function iniciarSessaoAuth({ accessToken, tokenType, expiresIn }) {
+  const duracao = Number(expiresIn);
+  if (
+    typeof accessToken !== "string" ||
+    !accessToken.trim() ||
+    typeof tokenType !== "string" ||
+    tokenType.toLowerCase() !== "bearer" ||
+    !Number.isFinite(duracao) ||
+    duracao <= 0
+  ) {
+    throw new Error("A API retornou dados de autenticação inválidos.");
+  }
+
+  sessionStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({
+    accessToken,
+    tokenType: "Bearer",
+    expiresAt: Date.now() + duracao * 1000
+  }));
+}
+
+function limparSessaoAuth() {
+  sessionStorage.removeItem(AUTH_SESSION_KEY);
+  localStorage.removeItem("user");
+}
+
+function obterSessaoAuth() {
+  const valor = sessionStorage.getItem(AUTH_SESSION_KEY);
+  if (!valor) return null;
+
+  let sessao;
+  try {
+    sessao = JSON.parse(valor);
+  } catch {
+    limparSessaoAuth();
+    throw new Error("A sessão armazenada é inválida. Entre novamente.");
+  }
+
+  if (
+    typeof sessao?.accessToken !== "string" ||
+    !sessao.accessToken ||
+    sessao.tokenType !== "Bearer" ||
+    !Number.isFinite(sessao.expiresAt)
+  ) {
+    limparSessaoAuth();
+    throw new Error("A sessão armazenada é inválida. Entre novamente.");
+  }
+
+  if (Date.now() >= sessao.expiresAt) {
+    limparSessaoAuth();
+    return null;
+  }
+
+  return sessao;
 }
 
 function normalizarEmpresa(empresa) {
@@ -49,11 +117,38 @@ async function buscarEmpresas() {
   return lista.map(normalizarEmpresa);
 }
 
-async function respostaDaApi(response) {
+async function respostaDaApi(response, { limparSessaoEm401 = false } = {}) {
   const data = response.status === 204 ? null : await response.json().catch(() => null);
   if (!response.ok) {
     const detalhes = data?.errors?.map(erro => `${erro.field}: ${erro.message}`).join("; ");
-    throw new Error(detalhes || data?.message || `Erro HTTP ${response.status}`);
+    const erro = new Error(detalhes || data?.message || `Erro HTTP ${response.status}`);
+    erro.status = response.status;
+
+    if (response.status === 401 && limparSessaoEm401) {
+      limparSessaoAuth();
+      redirecionarParaLogin();
+    }
+
+    throw erro;
   }
   return data;
+}
+
+function redirecionarParaLogin() {
+  if (/\/Newsly\/login\.html$/i.test(window.location.pathname.replace(/\\/g, "/"))) return;
+  window.location.assign(urlLogin());
+}
+
+function encerrarSessao() {
+  limparSessaoAuth();
+  window.location.assign(urlLogin());
+}
+
+function urlLogin() {
+  const pathname = window.location.pathname.replace(/\\/g, "/");
+  return /\/Newsly\//i.test(pathname)
+    ? "login.html"
+    : /\/(Empresa|Gestor)\//i.test(pathname)
+      ? "../Newsly/login.html"
+      : "Newsly/login.html";
 }

@@ -1,3 +1,15 @@
+function destinoPorPerfil(usuario) {
+    const userRole = (usuario?.tipo || usuario?.role || "").trim().toUpperCase();
+    const pages = {
+        ADMIN: "../Gestor/gestor.html",
+        GESTOR: "../Gestor/gestor.html",
+        RESPONSAVEL: "../Empresa/nexus.html",
+        COLABORADOR: "../index.html"
+    };
+
+    return pages[userRole] || null;
+}
+
 window.loginController = function () {
     return {
         carregando: false,
@@ -8,10 +20,8 @@ window.loginController = function () {
         },
 
         async realizarLogin() {
-            console.log("Realizando login com os dados:", this.form);
-
             if (!this.form.email || !this.form.senha) {
-                alert("Preencha email e senha.");
+                alert("Preencha o e-mail e a senha.");
                 return;
             }
 
@@ -26,26 +36,31 @@ window.loginController = function () {
                     })
                 });
 
-                const user = dados || {};
-                const userRole = (user.tipo || user.role || "").toUpperCase();
+                const user = dados?.usuario;
+                if (!user || typeof user !== "object") {
+                    throw new Error("A API retornou dados de usuário inválidos.");
+                }
 
-                const pages = {
-                    RESPONSAVEL: "../Empresa/nexus.html",
-                    COLABORADOR: "../index.html",
-                    GESTOR: "../Gestor/gestor.html"
-                };
-
-                localStorage.setItem("user", JSON.stringify(user));
-
-                const destino = pages[userRole];
+                const destino = destinoPorPerfil(user);
                 if (!destino) {
-                    throw new Error(`Tipo de usuário sem página: ${userRole || "indefinido"}`);
+                    throw new Error("Este tipo de conta ainda não possui uma página de acesso.");
+                }
+
+                iniciarSessaoAuth(dados);
+                try {
+                    localStorage.setItem("user", JSON.stringify(user));
+                } catch (erro) {
+                    limparSessaoAuth();
+                    throw erro;
                 }
 
                 window.location.href = destino;
             } catch (erro) {
-                console.error(erro);
-                alert(erro?.message || "Email ou senha inválidos.");
+                if ([401, 404, 409].includes(erro?.status)) {
+                    alert("E-mail ou senha inválidos.");
+                } else {
+                    alert(erro?.message || "Não foi possível entrar. Tente novamente.");
+                }
             } finally {
                 this.carregando = false;
             }

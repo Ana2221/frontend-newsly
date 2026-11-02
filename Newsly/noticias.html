@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notícias | Nexus Júnior</title>
+    <title>Notícias | Newsly</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="../script/script.js"></script>
     <script defer src="../script/app.js"></script>
@@ -23,7 +23,7 @@
                     <a href="../index.html" @click="activeTab = 'home'"
                         :class="activeTab === 'home' ? 'bg-[#04007C] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
                         class="px-4 py-2 rounded-lg transition-all duration-200">
-                        Home
+                        Início
                     </a>
 
                     <a href="empresas.html" @click="activeTab = 'empresas'"
@@ -42,7 +42,7 @@
                 <div class="hidden md:flex items-center">
                     <a href="login.html" @click="activeTab = 'login'"
                         class="relative inline-flex items-center justify-center px-4 py-2 rounded-xl text-sm font-bold text-white bg-[#04007C] hover:bg-blue-800 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900">
-                        Acessar Conta
+                        Acessar conta
                     </a>
                 </div>
 
@@ -75,7 +75,7 @@
                 <a href="../index.html" @click="activeTab = 'home'; mobileMenuOpen = false"
                     :class="activeTab === 'home' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
                     class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
-                    Home
+                    Início
                 </a>
                 <a href="empresas.html" @click="activeTab = 'empresas'; mobileMenuOpen = false"
                     :class="activeTab === 'empresas' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
@@ -90,7 +90,7 @@
                 <div class="pt-4 pb-2 border-t border-gray-100 mt-2 px-2">
                     <a href="login.html" @click="activeTab = 'login'; mobileMenuOpen = false"
                         class="w-full flex items-center justify-center px-4 py-2.5 rounded-xl text-base font-bold text-white bg-slate-950 hover:bg-slate-800 transition shadow-sm">
-                        Acessar Conta
+                        Acessar conta
                     </a>
                 </div>
             </div>
@@ -100,7 +100,7 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" x-data="noticiasPublicasPage()">
         <div class="mb-10">
             <span class="bg-[#0f172a] text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
-                Últimas Notícias
+                Últimas notícias
             </span>
             <h1 class="text-4xl font-extrabold text-[#0f172a] mt-4 tracking-tight">Fique por dentro</h1>
             <p class="text-gray-500 text-lg mt-2">Últimas novidades, eventos e conquistas do movimento de empresas juniores.</p>
@@ -118,7 +118,7 @@
 
         <div class="mb-16" x-show="activeFilter === 'Todas'">
             <div class="flex items-center gap-2 mb-6 border-l-4 border-[#0f172a] pl-3">
-                <h2 class="text-2xl font-bold text-[#0f172a]">Em Destaque</h2>
+                <h2 class="text-2xl font-bold text-[#0f172a]">Em destaque</h2>
             </div>
 
             <div x-show="!carregando && noticiasVisiveis().slice(0, 2).length === 0" class="bg-gray-50 border border-gray-200 rounded-xl p-10 text-center">
@@ -147,7 +147,7 @@
 
         <div>
             <div class="flex items-center gap-2 mb-6 border-l-4 border-[#0f172a] pl-3">
-                <h2 class="text-2xl font-bold text-[#0f172a]">Todas as Notícias</h2>
+                <h2 class="text-2xl font-bold text-[#0f172a]">Todas as notícias</h2>
             </div>
 
             <div x-show="carregando" class="text-center text-gray-500 py-8">Carregando notícias...</div>

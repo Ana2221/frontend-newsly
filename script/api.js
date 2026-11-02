@@ -104,6 +104,10 @@
 
   function request(path, options = {}) {
     const finalUrl = path.startsWith("http") ? path : `${API_BASE_URL}${path}`;
+    if (typeof global.apiRequest === "function" && global.apiRequest !== request) {
+      return global.apiRequest(finalUrl, options);
+    }
+
     const headers = {
       Accept: "application/json",
       ...(options.headers || {}),
@@ -415,8 +419,6 @@
   if (typeof global !== "undefined") {
     global.NewslyAPI = api;
     global.api = api;
-    global.apiRequest = request;
-    global.respostaDaApi = handleResponse;
     global.buscarEmpresas = compat.buscarEmpresas;
     global.normalizarEmpresa = normalizarEmpresa;
     global.normalizarNoticiaApi = normalizarNoticia;

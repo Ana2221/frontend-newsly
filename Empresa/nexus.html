@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Empresa Junior - Gestão Integrada</title>
+    <title>Empresa Júnior | Gestão integrada</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../script/script.js"></script>
@@ -51,7 +51,7 @@
             <a href="../index.html" @click="activeTab = 'home'; mobileMenuOpen = false"
                 :class="activeTab === 'home' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
                 class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
-                Home
+                Início
             </a>
             <a href="empresas.html" @click="activeTab = 'empresas'; mobileMenuOpen = false"
                 :class="activeTab === 'empresas' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
@@ -66,7 +66,7 @@
             <div class="pt-4 pb-2 border-t border-gray-100 mt-2 px-2">
                 <a href="login.html" @click="activeTab = 'login'; mobileMenuOpen = false"
                     class="w-full flex items-center justify-center px-4 py-2.5 rounded-xl text-base font-bold text-white bg-slate-950 hover:bg-slate-800 transition shadow-sm">
-                    Acessar a Conta
+                    Acessar conta
                 </a>
             </div>
         </div>
@@ -81,7 +81,7 @@
                         class="w-10 h-10 bg-[#4f46e5] rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden"
                         x-data="{ logoFalhou: false }" @empresa-atualizada.window="logoFalhou = false">
                         <img x-show="(user?.empresa?.logoUrl || user?.empresa?.logo) && !logoFalhou"
-                            :src="(user.empresa.logoUrl || user.empresa.logo).startsWith('http') ? (user.empresa.logoUrl || user.empresa.logo) : `${api.baseUrl}${user.empresa.logoUrl || user.empresa.logo}`"
+                            :src="user?.empresa?.logoUrl || user?.empresa?.logo ? ((user.empresa.logoUrl || user.empresa.logo).startsWith('http') ? (user.empresa.logoUrl || user.empresa.logo) : `${api.baseUrl}${user.empresa.logoUrl || user.empresa.logo}`) : '../static/Union.svg'"
                             :alt="`Logo da ${user?.empresa?.nome || 'empresa'}`"
                             @error="logoFalhou = true"
                             class="h-full w-full object-contain">
@@ -165,7 +165,7 @@
                     </svg>
                     <span x-show="sidebarOpen">Recolher</span>
                 </button>
-                <button
+                <button @click="sair()"
                     class="w-full flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg text-sm transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path
@@ -639,7 +639,7 @@
                                     class="px-6 py-5 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
                                     <div>
                                         <h2 class="text-xl font-bold text-gray-900">Solicitar publicação</h2>
-                                        <p class="text-sm text-gray-500 mt-1">A notícia será enviada ao gestor escolhido para análise.</p>
+                                        <p class="text-sm text-gray-500 mt-1">A notícia será encaminhada automaticamente para análise da equipe.</p>
                                     </div>
                                     <button @click="sidebarAberta = false"
                                         class="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-200 transition-colors cursor-pointer">
@@ -654,17 +654,6 @@
                                 <form @submit.prevent="criarNoticia(form)" class="flex-1 overflow-y-auto p-6 space-y-5">
                                     <div x-show="erroSolicitacao" x-text="erroSolicitacao" class="rounded-lg bg-red-50 p-3 text-sm text-red-700" role="alert" aria-live="assertive"></div>
                                     <div x-show="mensagemSolicitacao" x-text="mensagemSolicitacao" class="rounded-lg bg-emerald-50 p-3 text-sm text-emerald-700" role="status" aria-live="polite"></div>
-                                    <div x-show="gestores.length === 0" class="rounded-lg bg-amber-50 p-3 text-sm text-amber-800" role="status">Não há gestores disponíveis. Tente novamente mais tarde.</div>
-
-                                    <div class="space-y-1.5">
-                                        <label for="gestor-solicitacao" class="block text-sm font-semibold text-gray-700">Gestor responsável <span class="text-red-500">*</span></label>
-                                        <select id="gestor-solicitacao" x-model="gestorSelecionadoId" required :disabled="gestores.length === 0 || enviandoSolicitacao" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:bg-gray-100">
-                                            <option value="" disabled>Selecione um gestor</option>
-                                            <template x-for="gestor in gestores" :key="gestor.id">
-                                                <option :value="String(gestor.id)" x-text="gestor.nome"></option>
-                                            </template>
-                                        </select>
-                                    </div>
 
                                     <div class="space-y-1.5">
                                         <label for="titulo" class="block text-sm font-semibold text-gray-700">
@@ -700,7 +689,7 @@
                                             class="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer transition-colors">
                                             Cancelar
                                         </button>
-                                        <button type="submit" :disabled="enviandoSolicitacao || gestores.length === 0"
+                                        <button type="submit" :disabled="enviandoSolicitacao"
                                             class="px-5 py-2 bg-[#4f46e5] hover:bg-[#1e293b] text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                                             <span x-text="enviandoSolicitacao ? 'Enviando...' : 'Enviar solicitação'"></span>
                                         </button>
@@ -728,7 +717,7 @@
                                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                                     <div>
                                         <h4 class="font-semibold text-gray-900" x-text="solicitacao.noticiaTitulo"></h4>
-                                        <p class="mt-1 text-sm text-gray-600">Gestor: <span x-text="solicitacao.gestorNome"></span></p>
+                                        <p class="mt-1 text-sm text-gray-600" x-text="solicitacao.gestorNome ? `Responsável pela análise: ${solicitacao.gestorNome}` : 'Fila compartilhada da equipe de gestores'"></p>
                                         <p class="mt-1 text-xs text-gray-500" x-text="solicitacao.criadaEm ? new Date(solicitacao.criadaEm).toLocaleString('pt-BR') : ''"></p>
                                         <p x-show="solicitacao.status === 'RECUSADA' && solicitacao.motivoRecusa" class="mt-2 text-sm text-red-700">Motivo: <span x-text="solicitacao.motivoRecusa"></span></p>
                                     </div>
@@ -771,9 +760,19 @@
                             <div
                                 class="bg-gray-50 px-6 py-3 border-t border-gray-100 flex justify-between items-center text-xs">
                                 <span class="text-gray-500" x-text="'Por: ' + (noticia.autor || noticia.empresaNome || 'Empresa')"></span>
-                                <a :href="linkDetalheNoticia(noticia)"
-                                    class="text-[#4f46e5] font-medium hover:underline">Ler notícia completa
-                                    &rarr;</a>
+                                <div class="flex items-center gap-4">
+                                    <a :href="linkDetalheNoticia(noticia)"
+                                        class="text-[#4f46e5] font-medium hover:underline">Ler notícia completa
+                                        &rarr;</a>
+                                    <button type="button" @click="abrirEdicaoNoticia(noticia)"
+                                        class="font-medium text-gray-700 hover:text-[#4f46e5] hover:underline">
+                                        Editar
+                                    </button>
+                                    <button type="button" @click="deletarNoticia(noticia)"
+                                        :disabled="noticiaEmExclusao === noticia.id"
+                                        class="font-medium text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
+                                        x-text="noticiaEmExclusao === noticia.id ? 'Excluindo...' : 'Excluir'"></button>
+                                </div>
                             </div>
                         </div>
                     </template>
@@ -789,6 +788,67 @@
                         <p class="text-gray-500 text-sm mt-2">Nenhuma notícia encontrada nesta categoria. Tente outra!
                         </p>
                     </div>
+                </div>
+
+                <p x-show="mensagemEdicaoNoticia" x-text="mensagemEdicaoNoticia"
+                    class="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800"
+                    role="status" aria-live="polite"></p>
+                <p x-show="erroNoticiasEmpresa" x-text="erroNoticiasEmpresa"
+                    class="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700"
+                    role="alert" aria-live="assertive"></p>
+                <div x-show="modalEdicaoNoticia" x-cloak
+                    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+                    role="dialog" aria-modal="true" aria-labelledby="editar-noticia-responsavel-title"
+                    @keydown.escape.window="fecharEdicaoNoticia()">
+                    <form @submit.prevent="salvarEdicaoNoticia()"
+                        class="max-h-[90vh] w-full max-w-2xl space-y-4 overflow-y-auto rounded-xl bg-white p-6 shadow-xl">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <h2 id="editar-noticia-responsavel-title" class="text-xl font-bold text-gray-900">Editar notícia</h2>
+                                <p class="mt-1 text-sm text-gray-500">Atualize o título ou o conteúdo da notícia da sua empresa.</p>
+                            </div>
+                            <button type="button" @click="fecharEdicaoNoticia()"
+                                :disabled="salvandoEdicaoNoticia"
+                                class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 disabled:opacity-50"
+                                aria-label="Fechar edição">✕</button>
+                        </div>
+                        <div x-show="erroEdicaoNoticia" x-text="erroEdicaoNoticia"
+                            class="rounded-lg bg-red-50 p-3 text-sm text-red-700" role="alert"></div>
+                        <div>
+                            <label for="editar-noticia-responsavel-titulo" class="mb-1 block text-sm font-medium text-gray-700">Título</label>
+                            <input id="editar-noticia-responsavel-titulo" type="text" maxlength="255" required
+                                x-model="formularioEdicaoNoticia.titulo"
+                                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label for="editar-noticia-responsavel-conteudo" class="mb-1 block text-sm font-medium text-gray-700">Conteúdo</label>
+                            <textarea id="editar-noticia-responsavel-conteudo" rows="8" required
+                                x-model="formularioEdicaoNoticia.conteudo"
+                                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                        </div>
+                        <div>
+                            <label for="editar-noticia-responsavel-imagem" class="mb-1 block text-sm font-medium text-gray-700">Foto da notícia</label>
+                            <input id="editar-noticia-responsavel-imagem" type="file" accept="image/*"
+                                @change="selecionarImagemEdicao($event)" :disabled="salvandoEdicaoNoticia"
+                                class="block w-full text-sm text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-gray-100 file:px-3 file:py-2 file:font-medium file:text-gray-700 hover:file:bg-gray-200">
+                            <p class="mt-1 text-xs text-gray-500">Formatos de imagem, até 10 MB. Selecionar uma foto nova substitui a atual.</p>
+                            <img x-show="imagemEdicaoPreview || noticiaEmEdicao?.imagemUrl"
+                                :src="imagemEdicaoPreview || noticiaEmEdicao?.img"
+                                alt="Prévia da foto da notícia"
+                                class="mt-3 max-h-56 w-full rounded-lg border border-gray-200 object-contain"
+                                x-cloak>
+                        </div>
+                        <div class="flex justify-end gap-3 border-t border-gray-100 pt-4">
+                            <button type="button" @click="fecharEdicaoNoticia()"
+                                :disabled="salvandoEdicaoNoticia"
+                                class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+                                Cancelar
+                            </button>
+                            <button type="submit" :disabled="salvandoEdicaoNoticia"
+                                class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-wait disabled:opacity-50"
+                                x-text="salvandoEdicaoNoticia ? 'Salvando...' : 'Salvar alterações'"></button>
+                        </div>
+                    </form>
                 </div>
 
             </div>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Criar Conta | Nexus Júnior</title>
+  <title>Criar conta | Newsly</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
  <script src="../script/script.js"></script>
  <script defer src="../script/cadastro.js"></script>
@@ -17,14 +17,14 @@
     
     <div class="text-center mb-8">
 
-      <h1 class="text-2xl font-black text-gray-950 tracking-tight">Crie a sua conta</h1>
-      <p class="text-sm text-gray-500 mt-1">Inscreva-se para aceder à plataforma da Newsly.</p>
+      <h1 class="text-2xl font-black text-gray-950 tracking-tight">Crie sua conta</h1>
+      <p class="text-sm text-gray-500 mt-1">Cadastre-se para acessar a plataforma Newsly.</p>
     </div>
 
     <form @submit.prevent="submeterCadastro()" class="space-y-4">
       
       <div class="space-y-1.5">
-        <label for="nome" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Nome Completo</label>
+        <label for="nome" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Nome completo</label>
         <div class="relative">
           <input 
             type="text" 
@@ -38,7 +38,7 @@
       </div>
 
       <div class="space-y-1.5">
-        <label for="email" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Endereço de Email</label>
+        <label for="email" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Endereço de e-mail</label>
         <input 
           type="email" 
           id="email" 
@@ -61,29 +61,18 @@
       </div>
 
       <div class="space-y-1.5">
-        <label for="cargo" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Tipo de Usuário</label>
+        <label for="cargo" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Tipo de usuário</label>
         <select 
           id="cargo" 
           x-model="form.tipo" 
           class="w-full px-3.5 py-2 border border-gray-200 bg-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-700 transition-all cursor-pointer"
         >
-          <option value="COLABORADOR">Usuário (Membro Comum)</option>
-          <option value="RESPONSAVEL">Empresas Juniores</option>
+          <option value="COLABORADOR">Colaborador</option>
+          <option value="RESPONSAVEL">Responsável por empresa júnior</option>
           <option value="GESTOR">Gestor</option>
         </select>
       </div>
 
-      <div class="space-y-1.5" x-show="form.tipo !== 'GESTOR'">
-        <label for="empresaId" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Empresa ID</label>
-        <input 
-          type="number" 
-          id="empresaId" 
-          x-model="form.empresaId" 
-          min="1" 
-          placeholder="Opcional para associação" 
-          class="w-full px-3.5 py-2 border border-gray-200 bg-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all placeholder-gray-400"
-        />
-      </div>
 
       <div class="space-y-1.5" x-show="form.tipo === 'COLABORADOR'">
         <label class="flex items-center gap-2 text-sm font-medium text-gray-700">
@@ -93,7 +82,7 @@
       </div>
 
       <div class="space-y-1.5">
-        <label for="senha" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Palavra-passe / Senha</label>
+        <label for="senha" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Senha</label>
         <div class="relative" x-data="{ escondeSenha: true }">
           <input 
             :type="escondeSenha ? 'password' : 'text'" 
@@ -122,7 +111,7 @@
           class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 cursor-pointer"
         />
         <label for="termos" class="text-xs text-gray-500">
-          Aceito os <a href="#" class="text-blue-500 hover:underline font-medium">Termos de Serviço</a> e a <a href="#" class="text-blue-500 hover:underline font-medium">Política de Privacidade</a>.
+          Aceito os <a href="#" class="text-blue-500 hover:underline font-medium">Termos de serviço</a> e a <a href="#" class="text-blue-500 hover:underline font-medium">Política de privacidade</a>.
         </label>
       </div>
 
@@ -130,14 +119,14 @@
         type="submit" 
         class="w-full mt-2 py-2.5 px-4  bg-[#04007C] text-white font-bold text-sm rounded-lg shadow-sm transition-colors cursor-pointer flex items-center justify-center gap-2"
       >
-        Registar Conta
+        Criar conta
       </button>
     </form>
 
     <div class="mt-6 pt-6 border-t border-gray-100 text-center">
       <p class="text-xs text-gray-500">
-        Já possui uma conta? 
-        <a href="login.html" class="text-blue-500 hover:underline font-bold transition-all ml-1">Inicie sessão aqui</a>
+        Já tem uma conta?
+        <a href="login.html" class="text-blue-500 hover:underline font-bold transition-all ml-1">Entre aqui</a>
       </p>
     </div>
 

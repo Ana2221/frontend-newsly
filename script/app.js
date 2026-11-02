@@ -169,6 +169,15 @@ function gestorPage() {
     return {
         currentTab: "solicitacoes",
         modalEJ: false,
+        modalEdicaoNoticia: false,
+        salvandoEdicaoNoticia: false,
+        erroEdicaoNoticia: "",
+        mensagemEdicaoNoticia: "",
+        noticiaEmEdicao: null,
+        formularioEdicaoNoticia: {
+            titulo: "",
+            conteudo: ""
+        },
         carregando: true,
         erroEmpresas: "",
         erroNoticias: "",
@@ -190,7 +199,10 @@ function gestorPage() {
         solicitacoes: [],
         novaEJ: {
             nome: "",
-            cnpj: ""
+            cnpj: "",
+            telefone: "",
+            email: "",
+            responsavelId: ""
         },
 
         async init() {
@@ -216,14 +228,32 @@ function gestorPage() {
                 : "../Newsly/noticias.html";
         },
 
+        noticiaDaSolicitacao(solicitacao) {
+            const noticia = this.noticias.find(item =>
+                String(item.id) === String(solicitacao?.noticiaId)
+            );
+            if (noticia) return noticia;
+
+            const noticiaSolicitada = solicitacao?.noticia &&
+                typeof solicitacao.noticia === "object" &&
+                !Array.isArray(solicitacao.noticia)
+                ? solicitacao.noticia
+                : {};
+            return normalizarNoticiaApi({
+                ...noticiaSolicitada,
+                id: noticiaSolicitada.id ?? solicitacao?.noticiaId,
+                titulo: noticiaSolicitada.titulo || solicitacao?.noticiaTitulo,
+                conteudo: noticiaSolicitada.conteudo || solicitacao?.noticiaConteudo,
+                empresaNome: noticiaSolicitada.empresaNome || solicitacao?.empresaNome,
+                imagemUrl: noticiaSolicitada.imagemUrl || solicitacao?.noticiaImagemUrl
+            });
+        },
+
         normalizarListaSolicitacoes(resultado) {
             const lista = Array.isArray(resultado) ? resultado : resultado?.content || [];
             if (!this.sessaoGestorValida || !Array.isArray(lista)) return [];
 
-            return lista.filter(solicitacao =>
-                solicitacao.status === "PENDENTE" &&
-                String(solicitacao.gestorId) === String(this.gestor.id)
-            );
+            return lista.filter(solicitacao => solicitacao.status === "PENDENTE");
         },
 
         mensagemErro(error, fallback) {
@@ -272,6 +302,68 @@ function gestorPage() {
             );
         },
 
+        abrirEdicaoNoticia(noticia) {
+            this.noticiaEmEdicao = noticia;
+            this.mensagemEdicaoNoticia = "";
+            this.formularioEdicaoNoticia = {
+                titulo: noticia.titulo || "",
+                conteudo: noticia.conteudo || ""
+            };
+            this.erroEdicaoNoticia = "";
+            this.modalEdicaoNoticia = true;
+        },
+
+        async salvarEdicaoNoticia() {
+            this.erroEdicaoNoticia = "";
+            const noticia = this.noticiaEmEdicao;
+            const titulo = this.formularioEdicaoNoticia.titulo.trim();
+            const conteudo = this.formularioEdicaoNoticia.conteudo.trim();
+
+            if (!noticia?.id) {
+                this.erroEdicaoNoticia = "Não foi possível identificar a notícia para edição.";
+                return;
+            }
+            if (!titulo || !conteudo) {
+                this.erroEdicaoNoticia = "Informe o título e o conteúdo da notícia.";
+                return;
+            }
+
+            this.salvandoEdicaoNoticia = true;
+            try {
+                const resposta = await api.noticias.atualizar(noticia.id, {
+                    titulo,
+                    conteudo,
+                    publicadaEm: noticia.publicadaEm,
+                    empresaId: noticia.empresaId
+                });
+                const noticiaAtualizada = resposta?.noticia || resposta || {};
+                const normalizada = normalizarNoticiaApi({
+                    ...noticia,
+                    ...noticiaAtualizada,
+                    titulo,
+                    conteudo
+                });
+                const empresa = this.empresas.find(item =>
+                    String(item.id) === String(normalizada.empresaId)
+                );
+                const noticiaComEmpresa = {
+                    ...normalizada,
+                    empresaNome: normalizada.empresaNome || empresa?.nome || noticia.empresaNome
+                };
+
+                this.noticias = this.noticias.map(item =>
+                    String(item.id) === String(noticia.id) ? noticiaComEmpresa : item
+                );
+                this.mensagemEdicaoNoticia = "Notícia atualizada com sucesso.";
+                this.modalEdicaoNoticia = false;
+                this.noticiaEmEdicao = null;
+            } catch (error) {
+                this.erroEdicaoNoticia = this.mensagemErro(error, "Não foi possível salvar as alterações da notícia.");
+            } finally {
+                this.salvandoEdicaoNoticia = false;
+            }
+        },
+
         async carregarDados() {
             this.carregando = true;
             this.erroEmpresas = "";
@@ -293,13 +385,27 @@ function gestorPage() {
 
             if (noticiasResult.status === "fulfilled") {
                 const data = noticiasResult.value;
-                const lista = Array.isArray(data) ? data : data?.content || data?.noticias || [];
-                this.noticias = lista.map(noticia => {
-                    const normalizada = normalizarNoticiaApi(noticia);
-                    const empresa = this.empresas.find(item => String(item.id) === String(normalizada.empresaId));
-                    return { ...normalizada, empresaNome: noticia.empresaNome || empresa?.nome || "Empresa não informada" };
-                });
+                const lista = [
+                    data,
+                    data?.content,
+                    data?.noticias,
+                    data?.data,
+                    data?.data?.content,
+                    data?.data?.noticias
+                ].find(Array.isArray);
+
+                if (!lista) {
+                    this.noticias = [];
+                    this.erroNoticias = "A API retornou um formato inválido para as notícias.";
+                } else {
+                    this.noticias = lista.map(noticia => {
+                        const normalizada = normalizarNoticiaApi(noticia);
+                        const empresa = this.empresas.find(item => String(item.id) === String(normalizada.empresaId));
+                        return { ...normalizada, empresaNome: noticia.empresaNome || empresa?.nome || "Empresa não informada" };
+                    });
+                }
             } else {
+                this.noticias = [];
                 this.erroNoticias = this.mensagemErro(noticiasResult.reason, "Não foi possível carregar as notícias.");
             }
 
@@ -410,11 +516,21 @@ function gestorPage() {
 
         async cadastrarEJ() {
             this.erroEJ = "";
-            this.enviandoEJ = true;
+            const responsavelId = Number(this.novaEJ.responsavelId);
+            if (!Number.isSafeInteger(responsavelId) || responsavelId <= 0) {
+                this.erroEJ = "Informe um ID de responsável válido.";
+                return;
+            }
 
+            this.enviandoEJ = true;
             const payload = {
                 nome: this.novaEJ.nome.trim(),
-                cnpj: this.novaEJ.cnpj.trim()
+                cnpj: this.novaEJ.cnpj.trim(),
+                contatos: {
+                    telefone: this.novaEJ.telefone.trim(),
+                    email: this.novaEJ.email.trim()
+                },
+                responsavelId
             };
 
             try {
@@ -425,7 +541,7 @@ function gestorPage() {
                 await this.carregarDados();
 
                 this.modalEJ = false;
-                this.novaEJ = { nome: "", cnpj: "" };
+                this.novaEJ = { nome: "", cnpj: "", telefone: "", email: "", responsavelId: "" };
             } catch (error) {
                 this.erroEJ = this.mensagemErro(error, "Não foi possível cadastrar a empresa.");
                 console.error(error);

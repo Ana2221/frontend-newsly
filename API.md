@@ -98,9 +98,8 @@ Autentica o usuário e retorna os dados do tipo real.
 | `senha` | `String` | ✅ |
 
 **Responses:**
-- `200` — `ColaboradorResponseDTO` | `GestorResponseDTO` | `ResponsavelResponseDTO` (conforme o tipo do usuário)
-- `404` — Usuário não encontrado
-- `409` — E-mail ou senha inválidos
+- `200` — Objeto com `accessToken`, `tokenType`, `expiresIn` e `usuario` (dados do usuário autenticado)
+- `401` — E-mail ou senha inválidos
 
 ---
 
@@ -309,7 +308,12 @@ Atualiza os dados base do usuário. Campos `null` não sobrescrevem os valores o
 ```json
 {
   "nome": "Nite Jr",
-  "cnpj": "12.345.678/0001-90"
+  "cnpj": "12.345.678/0001-90",
+  "contatos": {
+    "telefone": "11999999999",
+    "email": "contato@nitejr.com"
+  },
+  "responsavelId": 1
 }
 ```
 
@@ -317,6 +321,9 @@ Atualiza os dados base do usuário. Campos `null` não sobrescrevem os valores o
 |-------|------|-------------|-----------|
 | `nome` | `String` | ✅ | Máx. 150 caracteres |
 | `cnpj` | `String` | ✅ | Formato `XX.XXX.XXX/XXXX-XX` |
+| `contatos.email` | `String` | ✅ | E-mail de contato válido |
+| `contatos.telefone` | `String` | ❌ | Máx. 20 caracteres |
+| `responsavelId` | `Long` | ✅ | ID de um responsável cadastrado |
 
 **Responses:** `201` — `EmpresaJrResponseDTO`
 > `409` se o CNPJ já estiver cadastrado.
@@ -514,6 +521,18 @@ Adiciona um colaborador à empresa.
 ### PUT `/noticias/{id}` — `200` `NoticiaResponseDTO` / `404`
 ### DELETE `/noticias/{id}` — `204` / `404`
 
+Para atualizar a foto, envie `PATCH /noticias/{id}/imagem` como `multipart/form-data`, com o arquivo no campo `arquivo`. A rota retorna `NoticiaResponseDTO`.
+
+O `PUT /noticias/{id}` recebe os campos editáveis `titulo` e `conteudo`, mantendo `publicadaEm` e `empresaId` da notícia:
+```json
+{
+  "titulo": "Título atualizado",
+  "conteudo": "Conteúdo atualizado...",
+  "publicadaEm": "2026-08-17T10:00:00",
+  "empresaId": 1
+}
+```
+
 **NoticiaResponseDTO:**
 ```json
 {
@@ -530,26 +549,36 @@ Adiciona um colaborador à empresa.
 
 ## Solicitações de Publicação `/solicitacoes`
 
-O responsável cria a notícia e envia sua solicitação para um gestor específico. O gestor pode aceitar ou recusar solicitações pendentes; o responsável pode cancelar as suas enquanto estiverem pendentes.
+O responsável envia a notícia diretamente para submissão com `POST /solicitacoes`, sem precisar escolher um gestor. O backend disponibiliza o pedido aos gestores para análise.
 
 ### POST `/solicitacoes`
 
 **Request Body:**
 ```json
 {
-  "responsavelId": 1,
-  "gestorId": 2,
-  "noticiaId": 3
+  "titulo": "Nova parceria firmada",
+  "conteudo": "A empresa firmou uma nova parceria...",
+  "publicadaEm": "2026-08-17T10:00:00",
+  "empresaId": 1,
+  "responsavelId": 5
 }
 ```
 
-**Responses:** `201` — `SolicitacaoResponseDTO` / `404` se uma referência não existir / `409` se já houver solicitação pendente para a mesma notícia e gestor.
+| Campo | Tipo | Obrigatório |
+|-------|------|-------------|
+| `titulo` | `String` | ✅ |
+| `conteudo` | `String` | ✅ |
+| `publicadaEm` | `LocalDateTime` | ✅ |
+| `empresaId` | `Long` | ✅ |
+| `responsavelId` | `Long` | ✅ |
+
+**Responses:** `201` — `SolicitacaoResponseDTO`
 
 ### PATCH `/solicitacoes/{id}/aceitar`
-Aceita uma solicitação pendente. Somente o gestor destinatário pode executar esta ação.
+Aceita uma solicitação pendente. Um gestor autenticado pode executar esta ação.
 
 ### PATCH `/solicitacoes/{id}/recusar`
-Recusa uma solicitação pendente. Somente o gestor destinatário pode executar esta ação.
+Recusa uma solicitação pendente. Um gestor autenticado pode executar esta ação.
 
 **Request Body (opcional):** `{ "motivoRecusa": "Conteúdo fora do padrão." }`
 
@@ -562,7 +591,7 @@ Cancela uma solicitação pendente. Somente o responsável que a criou pode exec
 ### GET `/solicitacoes/gestor/{gestorId}`
 ### GET `/solicitacoes/gestor/{gestorId}/pendentes`
 
-As listagens por responsável e gestor retornam todos os status; a rota `/pendentes` retorna somente solicitações pendentes do gestor.
+As listagens por responsável e gestor retornam todos os status; a rota `/pendentes` retorna somente solicitações pendentes.
 
 **SolicitacaoResponseDTO:** `id`, `responsavelId`, `responsavelNome`, `gestorId`, `gestorNome`, `noticiaId`, `noticiaTitulo`, `status`, `criadaEm`, `respondidaEm` (opcional) e `motivoRecusa` (opcional). Os status possíveis são `PENDENTE`, `ACEITA`, `RECUSADA` e `CANCELADA`.
 

@@ -22,7 +22,7 @@
                     </div>
                     <div>
                         <h2 class="text-sm font-bold text-gray-900 leading-tight">Gestor de EJs</h2>
-                        <p class="text-xs text-gray-500">Painel da Controle</p>
+                        <p class="text-xs text-gray-500">Painel de controle</p>
                     </div>
                 </div>
 
@@ -51,6 +51,10 @@
                 </nav>
             </div>
 
+            <button type="button" @click="encerrarSessao()"
+                class="mb-4 w-full rounded-lg px-4 py-2 text-left text-sm text-red-600 transition-colors hover:bg-red-50">
+                Sair
+            </button>
             <div class="text-xs text-gray-400 border-t border-gray-100 pt-4">
                 &copy; 2026 Federação de EJs
             </div>
@@ -105,13 +109,13 @@
                         role="status" aria-live="polite">
                         <p class="text-sm font-medium text-gray-800" x-text="resultadoDeduplicacao?.mensagem"></p>
                         <p class="mt-1 text-sm text-gray-600"
-                            x-text="`${resultadoDeduplicacao?.totalRemovidos || 0} usuário(s) removido(s)`"></p>
+                            x-text="`${resultadoDeduplicacao?.totalRemovidos || 0} ${resultadoDeduplicacao?.totalRemovidos === 1 ? 'usuário removido' : 'usuários removidos'}`"></p>
                         <ul x-show="resultadoDeduplicacao?.usuariosRemovidos?.length"
                             class="mt-3 space-y-1 border-t border-gray-200 pt-3 text-sm text-gray-600">
                             <template x-for="usuario in (resultadoDeduplicacao?.usuariosRemovidos || [])" :key="usuario.id">
                                 <li>
                                     <span class="font-medium text-gray-800" x-text="usuario.nome || 'Nome não informado'"></span>
-                                    <span x-text="` · ID ${usuario.id} · ${usuario.tipo || 'USUARIO'}${usuario.email ? ' · ' + usuario.email : ''}`"></span>
+                                    <span x-text="` · ID ${usuario.id} · ${usuario.tipo || 'USUÁRIO'}${usuario.email ? ' · ' + usuario.email : ''}`"></span>
                                 </li>
                             </template>
                         </ul>
@@ -194,19 +198,29 @@
                     <p x-text="erroSolicitacoes"></p>
                     <button type="button" @click="carregarSolicitacoes()" :disabled="carregandoSolicitacoes" class="mt-2 font-semibold underline disabled:opacity-50">Tentar novamente</button>
                 </div>
-                <p x-show="carregandoSolicitacoes && sessaoGestorValida" class="py-6 text-sm text-gray-500">Carregando sua fila...</p>
+                <p x-show="carregandoSolicitacoes && sessaoGestorValida" class="py-6 text-sm text-gray-500">Carregando a fila compartilhada...</p>
 
                 <div class="space-y-4">
                     <template x-for="solicitacao in solicitacoes" :key="solicitacao.id">
-                        <article class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                        <article x-data="{ noticia: noticiaDaSolicitacao(solicitacao) }" class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
                             <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                                 <div class="min-w-0">
-                                    <h2 class="font-semibold text-gray-900" x-text="solicitacao.noticiaTitulo"></h2>
+                                    <h2 class="font-semibold text-gray-900" x-text="noticia.titulo"></h2>
                                     <p class="mt-1 text-sm text-gray-600">Solicitado por <span class="font-medium" x-text="solicitacao.responsavelNome"></span></p>
                                     <p class="mt-1 text-xs text-gray-500" x-text="solicitacao.criadaEm ? new Date(solicitacao.criadaEm).toLocaleString('pt-BR') : 'Data não informada'"></p>
                                 </div>
                                 <span class="shrink-0 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800">Pendente</span>
                             </div>
+                            <img x-show="noticia.imagemUrl" :src="noticia.img" :alt="`Imagem da notícia: ${noticia.titulo}`"
+                                class="mt-4 max-h-64 w-full rounded-lg border border-gray-200 object-cover" x-cloak>
+                            <p class="mt-4 whitespace-pre-line text-sm leading-6 text-gray-700"
+                                x-text="noticia.conteudo || 'O conteúdo da notícia não está disponível.'"></p>
+                            <p x-show="noticia.empresaNome" class="mt-3 text-xs font-semibold text-indigo-600"
+                                x-text="noticia.empresaNome"></p>
+                            <a :href="linkDetalheNoticia(noticia)"
+                                class="mt-3 inline-flex text-sm font-semibold text-indigo-700 hover:text-indigo-900 hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-600 rounded">
+                                Ler notícia completa →
+                            </a>
                             <div class="mt-4">
                                 <label :for="`motivo-recusa-${solicitacao.id}`" class="block text-xs font-medium text-gray-600 mb-1">Motivo da recusa (opcional)</label>
                                 <textarea :id="`motivo-recusa-${solicitacao.id}`" x-model="motivosRecusa[solicitacao.id]" rows="2" maxlength="500" placeholder="Informe o motivo, se necessário" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
@@ -403,6 +417,9 @@
                     </div>
                 </div>
 
+                <p x-show="mensagemEdicaoNoticia" x-text="mensagemEdicaoNoticia"
+                    class="mb-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800"
+                    role="status" aria-live="polite"></p>
                 <div class="space-y-4">
                     <template x-for="noticia in noticiasFiltradas()" :key="noticia.id">
                         <article class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
@@ -416,11 +433,58 @@
                             <a :href="linkDetalheNoticia(noticia)" class="inline-flex mt-3 text-sm font-semibold text-indigo-700 hover:text-indigo-900 hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-600 rounded">
                                 Ler notícia completa →
                             </a>
+                            <button type="button" @click="abrirEdicaoNoticia(noticia)"
+                                class="ml-4 inline-flex mt-3 text-sm font-semibold text-gray-700 hover:text-indigo-700 hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-600 rounded">
+                                Editar notícia
+                            </button>
                         </article>
                     </template>
                     <p x-show="carregando" class="text-sm text-gray-500">Carregando notícias...</p>
                     <div x-show="!carregando && erroNoticias" class="text-sm text-red-700" role="alert" aria-live="polite"><p x-text="erroNoticias"></p><button type="button" @click="carregarDados()" class="mt-1 font-semibold underline" :disabled="carregando">Tentar novamente</button></div>
                     <p x-show="!carregando && !erroNoticias && noticiasFiltradas().length === 0" class="text-sm text-gray-500">Nenhuma notícia encontrada.</p>
+                </div>
+
+                <div x-show="modalEdicaoNoticia" x-cloak
+                    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+                    role="dialog" aria-modal="true" aria-labelledby="editar-noticia-title"
+                    @keydown.escape.window="if (!salvandoEdicaoNoticia) modalEdicaoNoticia = false">
+                    <form @submit.prevent="salvarEdicaoNoticia()"
+                        class="w-full max-w-2xl space-y-4 rounded-xl bg-white p-6 shadow-xl">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <h2 id="editar-noticia-title" class="text-xl font-bold text-gray-900">Editar notícia</h2>
+                                <p class="mt-1 text-sm text-gray-500">Atualize o título ou o conteúdo da notícia.</p>
+                            </div>
+                            <button type="button" @click="modalEdicaoNoticia = false"
+                                :disabled="salvandoEdicaoNoticia"
+                                class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 disabled:opacity-50"
+                                aria-label="Fechar edição">✕</button>
+                        </div>
+                        <div x-show="erroEdicaoNoticia" x-text="erroEdicaoNoticia"
+                            class="rounded-lg bg-red-50 p-3 text-sm text-red-700" role="alert"></div>
+                        <div>
+                            <label for="editar-noticia-titulo" class="mb-1 block text-sm font-medium text-gray-700">Título</label>
+                            <input id="editar-noticia-titulo" type="text" maxlength="255" required
+                                x-model="formularioEdicaoNoticia.titulo"
+                                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label for="editar-noticia-conteudo" class="mb-1 block text-sm font-medium text-gray-700">Conteúdo</label>
+                            <textarea id="editar-noticia-conteudo" rows="8" required
+                                x-model="formularioEdicaoNoticia.conteudo"
+                                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                        </div>
+                        <div class="flex justify-end gap-3 border-t border-gray-100 pt-4">
+                            <button type="button" @click="modalEdicaoNoticia = false"
+                                :disabled="salvandoEdicaoNoticia"
+                                class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+                                Cancelar
+                            </button>
+                            <button type="submit" :disabled="salvandoEdicaoNoticia"
+                                class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-wait disabled:opacity-50"
+                                x-text="salvandoEdicaoNoticia ? 'Salvando...' : 'Salvar alterações'"></button>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="hidden">
@@ -521,6 +585,21 @@
                 <input id="cnpj-ej" required type="text" x-model="novaEJ.cnpj" placeholder="00.000.000/0000-00" pattern="\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
             </div>
 
+            <div>
+                <label for="telefone-ej" class="block text-xs font-semibold text-gray-700 mb-1">Telefone da empresa</label>
+                <input id="telefone-ej" type="tel" x-model="novaEJ.telefone" placeholder="(11) 99999-9999" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+
+            <div>
+                <label for="email-ej" class="block text-xs font-semibold text-gray-700 mb-1">E-mail da empresa</label>
+                <input id="email-ej" required type="email" x-model="novaEJ.email" placeholder="contato@empresa.com" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+
+            <div>
+                <label for="responsavel-id-ej" class="block text-xs font-semibold text-gray-700 mb-1">ID do responsável</label>
+                <input id="responsavel-id-ej" required type="number" min="1" step="1" x-model="novaEJ.responsavelId" placeholder="Ex: 1" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+
             <div x-show="false">
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Universidade</label>
                 <input type="text" x-model="novaEJ.universidade" placeholder="Ex: Universidade Federal do Estado" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
@@ -547,10 +626,6 @@
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1">Presidente</label>
                         <input type="text" x-model="novaEJ.presidente" placeholder="Nome do presidente" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">E-mail</label>
-                        <input type="email" x-model="novaEJ.email" placeholder="contato@ej.com" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
             </div>
 

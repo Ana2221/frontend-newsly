@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home | Newsly</title>
+    <title>Início | Newsly</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="script/script.js"></script>
     <script src="script/app.js"></script>
@@ -25,7 +25,7 @@
                     <a href="index.html" @click="activeTab = 'home'"
                         :class="activeTab === 'home' ? 'bg-[#04007C] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
                         class="px-4 py-2 rounded-lg transition-all duration-200">
-                        Home
+                        Início
                     </a>
 
                     <a href="Newsly/empresas.html" @click="activeTab = 'empresas'"
@@ -44,7 +44,7 @@
                 <div class="hidden md:flex items-center">
                     <a href="Newsly/login.html" @click="activeTab = 'login'"
                         class="relative inline-flex items-center justify-center px-4 py-2 rounded-xl text-sm font-bold text-white bg-[#04007C] hover:bg-blue-800 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900">
-                        Acessar Conta
+                        Acessar conta
                     </a>
                 </div>
 
@@ -77,7 +77,7 @@
                 <a href="index.html" @click="activeTab = 'home'; mobileMenuOpen = false"
                     :class="activeTab === 'home' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
                     class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
-                    Home
+                    Início
                 </a>
                 <a href="Newsly/empresas.html" @click="activeTab = 'empresas'; mobileMenuOpen = false"
                     :class="activeTab === 'empresas' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
@@ -92,7 +92,7 @@
                 <div class="pt-4 pb-2 border-t border-gray-100 mt-2 px-2">
                     <a href="Newsly/login.html" @click="activeTab = 'login'; mobileMenuOpen = false"
                         class="w-full flex items-center justify-center px-4 py-2.5 rounded-xl text-base font-bold text-white bg-slate-950 hover:bg-slate-800 transition shadow-sm">
-                        Acessar Conta
+                        Acessar conta
                     </a>
                 </div>
             </div>

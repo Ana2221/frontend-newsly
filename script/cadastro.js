@@ -17,7 +17,7 @@ function cadastroController() {
       const telefone = this.form.telefone.trim();
 
       if (!nome || !email || !this.form.senha) {
-        throw new Error('Preencha nome, email e senha.');
+        throw new Error('Preencha o nome, o e-mail e a senha.');
       }
 
       if (this.form.senha.length < 6) {
@@ -60,14 +60,12 @@ function cadastroController() {
       try {
         const payload = this.getPayload();
 
-        console.log('Enviando dados de cadastro:', payload);
-
         await apiRequest('/usuarios', {
           method: 'POST',
           body: JSON.stringify(payload)
         });
 
-        alert(`Conta criada com sucesso! Bem-vindo, ${payload.nome}.`);
+        alert(`Conta criada com sucesso, ${payload.nome}! Você já pode acessar a plataforma.`);
         this.limparFormulario();
       } catch (error) {
         console.error(error);
