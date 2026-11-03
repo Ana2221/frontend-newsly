@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8080";
+const API_BASE_URL = "https://backend-newsly.onrender.com";
 const AUTH_SESSION_KEY = "newsly.auth";
 
 async function apiRequest(path, options = {}) {
