@@ -283,16 +283,19 @@
                 filterRole: 'Todos',
                 showForm: false,
                 novoMembro: '',
+                carregandoColaboradores: false,
+                erroColaboradores: '',
                 membrosAdicionados: [],
                 opcoesMembros: [],
                 colaboradoresTabela: [],
                 normalizarColaborador(colaborador) {
+                    const contato = colaborador?.contato || {};
                     return {
-                        id: colaborador?.id ?? null,
+                        id: colaborador?.id ?? colaborador?.colaboradorId ?? null,
                         nome: colaborador?.nome || colaborador?.name || '',
-                        email: colaborador?.contato.email || '',
+                        email: colaborador?.email || contato.email || '',
                         cargo: colaborador?.cargo || 'Membro',
-                        status: colaborador?.status || 'Pendente'
+                        status: colaborador?.status || (colaborador?.atividade === false ? 'Inativo' : 'Pendente')
                     };
                 },
                 getStatusClass(status) {
@@ -305,19 +308,28 @@
                     return map[status] || 'bg-gray-100 text-gray-700';
                 },
                 async carregarColaboradores() {
+                    this.carregandoColaboradores = true;
+                    this.erroColaboradores = '';
                     try {
-                        const data = await apiRequest('/colaboradores');
-                        const colaboradores = Array.isArray(data)
-                            ? data.map(item => this.normalizarColaborador(item)).filter(item => item.nome || item.email)
-                            : [];
+                        const resposta = await api.colaboradores.listar();
+                        const lista = Array.isArray(resposta)
+                            ? resposta
+                            : resposta?.content || resposta?.colaboradores || resposta?.data;
+                        if (!Array.isArray(lista)) {
+                            throw new Error('A API retornou um formato inválido para os colaboradores.');
+                        }
 
-                        console.log('Colaboradores carregados:', colaboradores);
+                        const colaboradores = lista
+                            .map(item => this.normalizarColaborador(item))
+                            .filter(item => item.nome || item.email);
                         this.colaboradoresTabela = colaboradores;
                         this.opcoesMembros = colaboradores;
                     } catch (error) {
-                        console.error('Falha ao carregar colaboradores:', error);
                         this.colaboradoresTabela = [];
                         this.opcoesMembros = [];
+                        this.erroColaboradores = error.message || 'Não foi possível carregar os colaboradores.';
+                    } finally {
+                        this.carregandoColaboradores = false;
                     }
                 },
                 async enviarColaboradores() {
@@ -460,7 +472,7 @@
                                 :key="(membro.email || membro.nome) + '-' + index">
                                 <span
                                     class="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-sm font-medium">
-                                    <span x-text="membro.nome || membro.contato.email || 'Colaborador'"></span>
+                                    <span x-text="membro.nome || membro.email || 'Colaborador'"></span>
                                     <button type="button" @click="removerMembro(index)"
                                         class="text-indigo-600 hover:text-indigo-900">×</button>
                                 </span>
@@ -491,6 +503,16 @@
                 </div>
 
                 <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div x-show="carregandoColaboradores" role="status"
+                        class="border-b border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
+                        Carregando colaboradores...
+                    </div>
+                    <div x-show="erroColaboradores" role="alert"
+                        class="flex items-center justify-between gap-3 border-b border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                        <span x-text="erroColaboradores"></span>
+                        <button type="button" @click="carregarColaboradores()"
+                            class="shrink-0 font-semibold underline">Tentar novamente</button>
+                    </div>
                     <table class="w-full border-collapse text-left">
                         <thead>
                             <tr
@@ -523,7 +545,7 @@
                                 </tr>
                             </template>
 
-                            <tr x-show="colaboradoresTabela.filter(item => searchMatches(item) && (filterRole === 'Todos' || item.cargo === filterRole)).length === 0">
+                            <tr x-show="!carregandoColaboradores && !erroColaboradores && colaboradoresTabela.filter(item => searchMatches(item) && (filterRole === 'Todos' || item.cargo === filterRole)).length === 0">
                                 <td colspan="4" class="p-8 text-center text-sm text-gray-500">
                                     Nenhum colaborador encontrado.
                                 </td>

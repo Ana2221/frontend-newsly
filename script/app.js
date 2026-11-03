@@ -219,7 +219,9 @@ function gestorPage() {
 
         get sessaoGestorValida() {
             const tipo = (this.gestor?.tipo || this.gestor?.role || "").toUpperCase();
-            return tipo === "GESTOR" && Number.isFinite(Number(this.gestor?.id)) && Number(this.gestor.id) > 0;
+            return ["GESTOR", "ADMIN"].includes(tipo) &&
+                Number.isFinite(Number(this.gestor?.id)) &&
+                Number(this.gestor.id) > 0;
         },
 
         linkDetalheNoticia(noticia) {

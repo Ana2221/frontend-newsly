@@ -38,7 +38,6 @@ function cadastroController() {
         return {
           ...base,
           atividade: Boolean(this.form.atividade),
-          empresaId: this.form.empresaId ? Number(this.form.empresaId) : undefined
         };
       }
 
@@ -46,13 +45,11 @@ function cadastroController() {
         return {
           ...base,
           empresaId: this.form.empresaId ? Number(this.form.empresaId) : undefined,
-          permissoes: Array.isArray(this.form.permissoes) && this.form.permissoes.length ? this.form.permissoes : ['LEITOR']
         };
       }
 
       return {
         ...base,
-        permissoes: Array.isArray(this.form.permissoes) && this.form.permissoes.length ? this.form.permissoes : ['LEITOR']
       };
     },
 
