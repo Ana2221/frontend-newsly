@@ -1,5 +1,5 @@
 (function (global) {
-  const API_BASE_URL = "http://localhost:8080";
+  const API_BASE_URL = global.NEWSLY_API_BASE_URL || "http://localhost:8080";
 
   const routes = {
     usuarios: {
@@ -103,11 +103,11 @@
   };
 
   function request(path, options = {}) {
-    const finalUrl = path.startsWith("http") ? path : `${API_BASE_URL}${path}`;
     if (typeof global.apiRequest === "function" && global.apiRequest !== request) {
-      return global.apiRequest(finalUrl, options);
+      return global.apiRequest(path, options);
     }
 
+    const finalUrl = path.startsWith("http") ? path : `${API_BASE_URL}${path}`;
     const headers = {
       Accept: "application/json",
       ...(options.headers || {}),
