@@ -1,5 +1,5 @@
 (function (global) {
-  const API_BASE_URL = global.NEWSLY_API_BASE_URL || "http://localhost:8080";
+  const API_BASE_URL = global.NEWSLY_API_BASE_URL || "https://backend-newsly.onrender.com/";
 
   const routes = {
     usuarios: {
