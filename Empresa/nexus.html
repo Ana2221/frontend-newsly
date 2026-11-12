@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Empresa Júnior | Gestão integrada</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../admin.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../script/script.js"></script>
     <script src="../script/api.js"></script>
@@ -39,9 +43,8 @@
     </style>
 </head>
 
-<body class="bg-gray-50 text-gray-800 font-sans antialiased" x-data="userLoad()" x-init="init()"
-    x-effect="document.documentElement.style.setProperty('--empresa-cor', CSS.supports('color', user?.empresa?.cor || '') ? user.empresa.cor : '#4f46e5')"
-    @empresa-atualizada.window="user && (user.empresa = { ...(user.empresa || {}), ...$event.detail })">
+<body class="company-app bg-gray-50 text-gray-800 font-sans antialiased" x-data="userLoad()" x-init="init()"
+    @empresa-atualizada.window="atualizarEmpresaTema($event.detail)">
     <div x-show="mobileMenuOpen" x-cloak x-transition:enter="transition ease-out duration-150"
         x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
         x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 translate-y-0"
@@ -71,9 +74,9 @@
             </div>
         </div>
     </div>
-    <div class="flex min-h-screen">
+    <div class="company-shell flex min-h-screen">
 
-        <aside class="bg-white border-r border-gray-200 transition-all duration-300 flex flex-col justify-between"
+        <aside class="company-sidebar bg-white border-r border-gray-200 transition-all duration-300 flex flex-col justify-between"
             :class="sidebarOpen ? 'w-64' : 'w-20'">
             <div>
                 <div class="p-4 border-b border-gray-100 flex items-center gap-3">
@@ -177,7 +180,7 @@
             </div>
         </aside>
 
-        <main class="flex-1 p-8 bg-gray-50 max-w-7xl mx-auto w-full">
+        <main class="company-main flex-1 p-8 bg-gray-50 max-w-7xl mx-auto w-full">
 
             <div x-show="currentTab === 'painel'" x-cloak>
                 <div class="mb-6">

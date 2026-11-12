@@ -6,26 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Início | Newsly</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="public.css">
     <script src="script/script.js"></script>
     <script src="script/app.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
-<body class="bg-gray-50 text-gray-800 font-sans flex flex-col min-h-screen" x-data="homePage()" x-init="init()">
-    <nav class="w-3/4 mx-auto bg-white rounded-full bg-clip-padding backdrop-filter backdrop-blur-lg border border-gray-200 bg-opacity-20 border-gray-100 sticky top-5 z-50 shadow-md"
+<body class="public-page page-home flex flex-col min-h-screen" x-data="homePage()" x-init="init()">
+    <nav class="public-nav w-3/4 mx-auto bg-white rounded-full bg-clip-padding backdrop-filter backdrop-blur-lg border border-gray-200 bg-opacity-20 border-gray-100 sticky top-5 z-50 shadow-md"
         x-data="{ mobileMenuOpen: false, activeTab: 'home' }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
 
                 <a href="index.html" class="flex items-center space-x-3" aria-label="Newsly — página inicial">
                     <img src="static/Union.svg" class="w-10" alt="Newsly" />
+                    <span class="brand-wordmark">newsly<span>.</span></span>
                 </a>
 
                 <div class="hidden md:flex items-center space-x-1 text-sm font-medium">
                     <a href="index.html" @click="activeTab = 'home'"
                         :class="activeTab === 'home' ? 'bg-[#04007C] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
-                        class="px-4 py-2 rounded-lg transition-all duration-200">
-                        Iníci
+                        class="px-4 py-2 rounded-lg transition-all duration-200" aria-current="page">
+                        Início
                     </a>
 
                     <a href="Newsly/empresas.html" @click="activeTab = 'empresas'"
@@ -76,7 +81,7 @@
             <div class="px-2 pt-2 pb-4 space-y-1 shadow-inner">
                 <a href="index.html" @click="activeTab = 'home'; mobileMenuOpen = false"
                     :class="activeTab === 'home' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
-                    class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
+                    class="block px-4 py-2.5 rounded-xl text-base font-medium transition" aria-current="page">
                     Início
                 </a>
                 <a href="Newsly/empresas.html" @click="activeTab = 'empresas'; mobileMenuOpen = false"
@@ -99,61 +104,73 @@
         </div>
     </nav>
 
-    <main class="flex-grow py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center my-12">
-            <div class="w-full flex justify-center">
-                <img src="static/Group 12.svg" alt="">
+    <main class="home-main">
+        <section class="home-hero" aria-labelledby="home-title">
+            <div class="hero-copy">
+                <p class="eyebrow"><span></span> Rede de empresas juniores · Brasil</p>
+                <h1 id="home-title">Ideias que viram <em>movimento.</em></h1>
+                <p class="hero-description">
+                    Um ponto de encontro para quem acredita que a universidade também é lugar de fazer acontecer.
+                    Descubra empresas juniores, histórias e oportunidades para crescer junto.
+                </p>
+                <div class="hero-actions">
+                    <a href="Newsly/empresas.html" class="button-primary">Explorar empresas <span aria-hidden="true">↗</span></a>
+                    <a href="Newsly/noticias.html" class="text-link">Acompanhar novidades <span aria-hidden="true">→</span></a>
+                </div>
             </div>
-            <p class="max-w-2xl mx-auto text-lg text-gray-500 mb-8">
-                Plataforma dedicada a conectar e fortalecer o ecossistema de empresas juniores, promovendo
-                empreendedorismo universitário e desenvolvimento profissional.
-            </p>
-            <a href="Newsly/empresas.html"
-                class="bg-[#04007C] text-white px-6 py-3 rounded-xl font-medium hover:bg-indigo-700 transition shadow">
-                Ver empresas
-            </a>
-        </div>
+            <aside class="hero-note" aria-label="Sobre a comunidade Newsly">
+                <div class="note-topline"><span>Uma rede em movimento</span><span>01 — 03</span></div>
+                <img src="static/Union.svg" alt="" class="note-mark">
+                <p>O futuro do trabalho começa quando a gente aprende <em>fazendo.</em></p>
+                <div class="note-bottom"><span>Conectar</span><span>Descobrir</span><span>Crescer</span></div>
+                <span class="note-orbit" aria-hidden="true"></span>
+            </aside>
+            <div class="hero-index" aria-hidden="true">NEWSLY / EDIÇÃO DIGITAL</div>
+        </section>
 
-        <div class="bg-gray-100 py-16 mt-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-end mb-8">
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-900 mt-1">Últimas notícias </h2>
-                    </div>
-                    <a href="Newsly/noticias.html"
-                        class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 flex items-center">
-                        Ver todas as notícias <span class="ml-1">→</span>
+        <section class="home-latest" aria-labelledby="latest-title">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow"><span></span> Da comunidade</p>
+                    <h2 id="latest-title">O que está <em>acontecendo</em></h2>
+                </div>
+                <a href="Newsly/noticias.html" class="text-link">Todas as notícias <span aria-hidden="true">↗</span></a>
+            </div>
+
+            <div x-show="carregando" class="public-status">Carregando destaques...</div>
+            <div x-show="erro" x-text="erro" class="public-status public-error"></div>
+            <div x-show="!carregando && noticias.length === 0" class="public-empty">
+                <span class="empty-mark">N.</span>
+                <p>Não há notícias publicadas no momento.</p>
+            </div>
+
+            <div x-show="!carregando && noticias.length > 0" class="home-news-grid">
+                <template x-for="(noticia, index) in noticias" :key="noticia.id">
+                    <a :href="linkDetalheNoticia(noticia)" class="home-news-link">
+                        <article class="home-news-card">
+                            <div class="home-news-image"
+                                :style="`background-image: linear-gradient(180deg, rgba(11,15,82,0.02), rgba(11,15,82,0.58)), url('${noticia.img || 'static/Union.svg'}')`">
+                                <span class="news-category" x-text="(noticia.tipo || noticia.categoria || 'NOTÍCIA').toUpperCase()"></span>
+                                <span class="news-number" x-text="`0${index + 1}`"></span>
+                            </div>
+                            <div class="home-news-copy">
+                                <p class="news-date" x-text="noticia.data"></p>
+                                <h3 x-text="noticia.titulo"></h3>
+                                <p class="news-summary" x-text="noticia.descricao || noticia.conteudo"></p>
+                                <span class="read-more">Ler história <span aria-hidden="true">↗</span></span>
+                            </div>
+                        </article>
                     </a>
-                </div>
-
-                <div x-show="carregando" class="text-center text-gray-500 py-8">Carregando destaques...</div>
-                <div x-show="erro" x-text="erro" class="text-center text-amber-700 py-6"></div>
-
-                <div x-show="!carregando && noticias.length === 0" class="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-gray-500">
-                    Não há notícias publicadas no momento.
-                </div>
-
-                <div x-show="!carregando && noticias.length > 0" class="grid md:grid-cols-3 gap-8">
-                    <template x-for="noticia in noticias" :key="noticia.id">
-                        <a :href="linkDetalheNoticia(noticia)" class="block rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2">
-                            <article class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition h-full">
-                                <div class="h-48 bg-slate-300 bg-cover bg-center flex items-end p-4 text-white font-bold"
-                                    :style="`background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.6)), url('${noticia.img || 'static/Union.svg'}')`">
-                                    <span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs" x-text="(noticia.tipo || noticia.categoria || 'NOTÍCIA').toUpperCase()"></span>
-                                </div>
-                                <div class="p-6">
-                                    <p class="text-xs text-gray-400 mb-1" x-text="noticia.data"></p>
-                                    <h3 class="font-bold text-lg text-gray-900 mb-2" x-text="noticia.titulo"></h3>
-                                    <p class="text-sm text-gray-500 line-clamp-3" x-text="noticia.descricao || noticia.conteudo"></p>
-                                    <span class="inline-block mt-4 text-sm font-semibold text-indigo-700">Ler notícia completa →</span>
-                                </div>
-                            </article>
-                        </a>
-                    </template>
-                </div>
+                </template>
             </div>
-        </div>
+        </section>
     </main>
+
+    <footer class="public-footer">
+        <a href="index.html" class="footer-brand"><img src="static/Union.svg" alt=""> newsly<span>.</span></a>
+        <p>Ideias que aproximam. Iniciativas que transformam.</p>
+        <a href="Newsly/empresas.html">Feito para o movimento EJ <span aria-hidden="true">↗</span></a>
+    </footer>
 
 </body>
 

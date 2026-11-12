@@ -5,19 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notícias | Newsly</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../public.css">
     <script src="../script/script.js"></script>
     <script defer src="../script/app.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans min-h-screen">
+<body class="public-page page-news min-h-screen">
         <nav class="w-3/4 mx-auto bg-white rounded-full bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-20 border-gray-100 sticky top-5 z-50 shadow-md"
-        x-data="{ mobileMenuOpen: false, activeTab: 'home' }">
+        x-data="{ mobileMenuOpen: false, activeTab: 'noticias' }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
 
-                <div class="flex items-center space-x-3 cursor-pointer" @click="activeTab = 'home'">
-                    <img src="../static/Union.svg" class="w-10" />
-                </div>
+                <a href="../index.html" class="flex items-center space-x-3" aria-label="Newsly — página inicial">
+                    <img src="../static/Union.svg" class="w-10" alt="Newsly" />
+                    <span class="brand-wordmark">newsly<span>.</span></span>
+                </a>
 
                 <div class="hidden md:flex items-center space-x-1 text-sm font-medium">
                     <a href="../index.html" @click="activeTab = 'home'"
@@ -34,7 +39,7 @@
 
                     <a href="noticias.html" @click="activeTab = 'noticias'"
                         :class="activeTab === 'noticias' ? 'bg-[#04007C] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
-                        class="px-4 py-2 rounded-lg transition-all duration-200">
+                        class="px-4 py-2 rounded-lg transition-all duration-200" aria-current="page">
                         Notícias
                     </a>
                 </div>
@@ -84,7 +89,7 @@
                 </a>
                 <a href="noticias.html" @click="activeTab = 'noticias'; mobileMenuOpen = false"
                     :class="activeTab === 'noticias' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
-                    class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
+                    class="block px-4 py-2.5 rounded-xl text-base font-medium transition" aria-current="page">
                     Notícias
                 </a>
                 <div class="pt-4 pb-2 border-t border-gray-100 mt-2 px-2">
@@ -97,27 +102,25 @@
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" x-data="noticiasPublicasPage()">
+    <main class="news-main max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" x-data="noticiasPublicasPage()">
         <div class="mb-10">
-            <span class="bg-[#0f172a] text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
-                Últimas notícias
-            </span>
-            <h1 class="text-4xl font-extrabold text-[#0f172a] mt-4 tracking-tight">Fique por dentro</h1>
-            <p class="text-gray-500 text-lg mt-2">Últimas novidades, eventos e conquistas do movimento de empresas juniores.</p>
+            <p class="eyebrow"><span></span> O pulso do movimento</p>
+            <h1 class="text-4xl font-extrabold text-[#0f172a] mt-4 tracking-tight">Histórias em <em>movimento.</em></h1>
+            <p class="text-gray-500 text-lg mt-2">Novidades, encontros e conquistas de quem está fazendo a diferença nas empresas juniores.</p>
         </div>
 
         <div class="flex flex-wrap items-center gap-2 border-b border-gray-200 pb-6 mb-10">
             <template x-for="cat in ['Todas', 'Eventos', 'Prêmios', 'Projetos', 'Parcerias', 'Inovação']">
                 <button @click="activeFilter = cat"
                         :class="activeFilter === cat ? 'bg-[#0f172a] text-white' : 'text-gray-500 hover:text-gray-900 bg-transparent'"
-                        class="px-4 py-2 rounded font-medium text-sm transition-colors duration-200"
+                        class="px-4 py-2 rounded-full font-medium text-sm transition-colors duration-200"
                         x-text="cat">
                 </button>
             </template>
         </div>
 
         <div class="mb-16" x-show="activeFilter === 'Todas'">
-            <div class="flex items-center gap-2 mb-6 border-l-4 border-[#0f172a] pl-3">
+            <div class="news-section-heading flex items-center gap-2 mb-6">
                 <h2 class="text-2xl font-bold text-[#0f172a]">Em destaque</h2>
             </div>
 
@@ -146,7 +149,7 @@
         </div>
 
         <div>
-            <div class="flex items-center gap-2 mb-6 border-l-4 border-[#0f172a] pl-3">
+            <div class="news-section-heading flex items-center gap-2 mb-6">
                 <h2 class="text-2xl font-bold text-[#0f172a]">Todas as notícias</h2>
             </div>
 
@@ -178,6 +181,12 @@
         </div>
 
     </main>
+
+    <footer class="public-footer">
+        <a href="../index.html" class="footer-brand"><img src="../static/Union.svg" alt=""> newsly<span>.</span></a>
+        <p>Ideias que aproximam. Iniciativas que transformam.</p>
+        <a href="empresas.html">Feito para o movimento EJ <span aria-hidden="true">↗</span></a>
+    </footer>
 
     </body>
 </html>

@@ -61,21 +61,35 @@ async function carregarEmpresa() {
   }));
 
   const servicesGrid = document.getElementById("company-services-grid");
-  servicesGrid.replaceChildren(...empresa.servicos.map(servico => {
-    const article = document.createElement("article");
-    article.className = "flex flex-col rounded-2xl border border-border bg-card p-6 shadow-soft";
+  if (empresa.servicos.length === 0) {
+    const emptyState = document.createElement("p");
+    emptyState.className = "profile-empty-state";
+    emptyState.textContent = "Esta empresa ainda não cadastrou serviços. Entre em contato para saber mais.";
+    servicesGrid.replaceChildren(emptyState);
+  } else {
+    servicesGrid.replaceChildren(...empresa.servicos.map((servico, index) => {
+      const article = document.createElement("article");
+      article.className = "profile-service-card";
 
-    const title = document.createElement("h3");
-    title.className = "text-lg font-bold";
-    title.textContent = String(servico);
+      const number = document.createElement("span");
+      number.className = "profile-service-number";
+      number.textContent = String(index + 1).padStart(2, "0");
 
-    const description = document.createElement("p");
-    description.className = "mt-4 flex-1 text-sm leading-relaxed text-muted";
-    description.textContent = `Solução personalizada desenvolvida de acordo com as necessidades da ${empresa.nome}.`;
+      const title = document.createElement("h3");
+      title.textContent = String(servico);
 
-    article.append(title, description);
-    return article;
-  }));
+      const description = document.createElement("p");
+      description.textContent = `Solução personalizada desenvolvida de acordo com as necessidades da ${empresa.nome}.`;
+
+      const arrow = document.createElement("span");
+      arrow.className = "profile-service-arrow";
+      arrow.setAttribute("aria-hidden", "true");
+      arrow.textContent = "↗";
+
+      article.append(number, title, description, arrow);
+      return article;
+    }));
+  }
 
   const email = empresa.contato?.email || `${empresaId}@newsly.com`;
   const emailLink = document.getElementById("company-email");
