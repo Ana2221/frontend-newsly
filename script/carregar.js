@@ -29,10 +29,23 @@ function userLoad() {
       titulo: "",
       conteudo: "",
     },
+    aplicarCorEmpresa(empresa = this.user?.empresa) {
+      const configuracoes = empresa?.configurations || empresa?.configuration || {};
+      const corValida = [empresa?.cor, configuracoes.color]
+        .find(cor => /^#[0-9a-f]{6}$/i.test(cor || "")) || "#4f46e5";
+      document.documentElement.style.setProperty("--empresa-cor", corValida);
+    },
+    atualizarEmpresaTema(empresa) {
+      if (!this.user || !empresa) return;
+      this.user.empresa = { ...(this.user.empresa || {}), ...empresa };
+      this.aplicarCorEmpresa(this.user.empresa);
+    },
     async init() {
+      this.aplicarCorEmpresa();
       try {
         const response = localStorage.getItem("user");
         this.user = response ? JSON.parse(response) : null;
+        this.aplicarCorEmpresa();
       } catch (error) {
         this.erroSolicitacoes = "Não foi possível ler sua sessão. Entre novamente.";
         return;
@@ -300,6 +313,7 @@ function userLoad() {
           })
           : [];
         this.user.empresa = { ...data, noticias };
+        this.aplicarCorEmpresa(this.user.empresa);
       } catch (error) {
         this.erroEmpresa = error.message || "Não foi possível carregar os dados da empresa.";
         console.error("Não foi possível carregar os dados da empresa.", error);

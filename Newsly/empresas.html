@@ -6,20 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Empresas | Newsly</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../public.css">
     <script src="../script/script.js"></script>
     <script defer src="../script/app.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
-<body class="bg-gray-50 text-gray-800 font-sans flex flex-col min-h-screen" x-data="empresasPage()">
-    <nav class="w-3/4 mx-auto bg-white rounded-full bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-20 border-gray-100 sticky top-5 z-50 shadow-md"
-        x-data="{ mobileMenuOpen: false, activeTab: 'home' }">
+<body class="public-page page-companies flex flex-col min-h-screen" x-data="empresasPage()">
+    <nav class="public-nav w-3/4 mx-auto bg-white rounded-full bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-20 border-gray-100 sticky top-5 z-50 shadow-md"
+        x-data="{ mobileMenuOpen: false, activeTab: 'empresas' }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
 
-                <div class="flex items-center space-x-3 cursor-pointer" @click="activeTab = 'home'">
+                <a href="../index.html" class="flex items-center space-x-3" aria-label="Newsly — página inicial">
                     <img src="../static/Union.svg" class="w-10" alt="Newsly" />
-                </div>
+                    <span class="brand-wordmark">newsly<span>.</span></span>
+                </a>
 
                 <div class="hidden md:flex items-center space-x-1 text-sm font-medium">
                     <a href="../index.html" @click="activeTab = 'home'"
@@ -30,7 +35,7 @@
 
                     <a href="empresas.html" @click="activeTab = 'empresas'"
                         :class="activeTab === 'empresas' ? 'bg-[#04007C] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
-                        class="px-4 py-2 rounded-lg transition-all duration-200">
+                        class="px-4 py-2 rounded-lg transition-all duration-200" aria-current="page">
                         Empresas
                     </a>
 
@@ -81,7 +86,7 @@
                 </a>
                 <a href="empresas.html" @click="activeTab = 'empresas'; mobileMenuOpen = false"
                     :class="activeTab === 'empresas' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
-                    class="block px-4 py-2.5 rounded-xl text-base font-medium transition">
+                    class="block px-4 py-2.5 rounded-xl text-base font-medium transition" aria-current="page">
                     Empresas
                 </a>
                 <a href="noticias.html" @click="activeTab = 'noticias'; mobileMenuOpen = false"
@@ -100,14 +105,14 @@
     </nav>
 
 
-    <main class="flex-grow py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center my-8">
-            <h1 class="text-3xl font-extrabold text-gray-900 mt-1 mb-2">Empresas em destaque</h1>
-            <p class="text-gray-500 max-w-xl mx-auto">Conheça algumas das empresas juniores mais inovadoras e atuantes
-                do movimento.</p>
+    <main class="companies-main flex-grow py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="companies-heading text-center my-8">
+            <p class="eyebrow"><span></span> Diretório da comunidade</p>
+            <h1 class="text-3xl font-extrabold text-gray-900 mt-1 mb-2">Talento em <em>ação.</em></h1>
+            <p class="text-gray-500 max-w-xl mx-auto">Conheça as empresas juniores que estão transformando conhecimento em impacto real.</p>
         </div>
 
-        <div class="max-w-md mx-auto mb-12">
+        <div class="company-search max-w-md mx-auto mb-12">
             <div class="relative">
                 <label for="company-search" class="sr-only">Pesquisar empresas</label>
                 <input id="company-search" type="text" x-model="search" placeholder="Pesquisar empresas..."
@@ -121,12 +126,12 @@
             </div>
         </div>
 
-        <p x-show="carregando" class="text-center text-gray-500 py-8">Carregando empresas...</p>
-        <output x-show="erro" x-text="erro" class="block text-center text-amber-700 py-4"></output>
+        <p x-show="carregando" class="public-status text-center text-gray-500 py-8">Carregando empresas...</p>
+        <output x-show="erro" x-text="erro" class="public-status public-error block text-center text-amber-700 py-4"></output>
 
-        <div class="grid md:grid-cols-3 gap-8">
+        <div class="companies-grid grid md:grid-cols-3 gap-8">
             <template x-for="empresa in empresasFiltradas()" :key="empresa.id">
-                <article class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition relative" >
+                <article class="company-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition relative">
                     <span class="absolute top-4 right-4 bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-full font-medium" x-text="empresa.ano"></span>
                     <img :src="empresa.logo" :alt="`Logo da ${empresa.nome}`" @error="$event.target.src = '../static/Union.svg'"
                         class="mb-4 h-16 w-16 rounded-xl border border-gray-100 bg-white object-contain p-2">
@@ -143,11 +148,16 @@
                 </article>
             </template>
 
-            <p x-show="empresasFiltradas().length === 0" class="md:col-span-3 text-center text-gray-500 py-12">
+            <p x-show="empresasFiltradas().length === 0" class="company-empty md:col-span-3 text-center text-gray-500 py-12">
                 Nenhuma empresa encontrada.
             </p>
         </div>
     </main>
+    <footer class="public-footer">
+        <a href="../index.html" class="footer-brand"><img src="../static/Union.svg" alt=""> newsly<span>.</span></a>
+        <p>Ideias que aproximam. Iniciativas que transformam.</p>
+        <a href="noticias.html">Feito para o movimento EJ <span aria-hidden="true">↗</span></a>
+    </footer>
 </body>
 
 </html>
