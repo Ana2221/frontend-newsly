@@ -1,5 +1,5 @@
 (function (global) {
-  const API_BASE_URL = global.NEWSLY_API_BASE_URL || "https://backend-newsly.onrender.com/";
+  const API_BASE_URL = global.NEWSLY_API_BASE_URL || "http://localhost:8080";
 
   const routes = {
     usuarios: {
@@ -369,7 +369,18 @@
       porResponsavel: (id) => request(routes.solicitacoes.porResponsavel(id)),
       porGestor: (id) => request(routes.solicitacoes.porGestor(id)),
       pendentesPorGestor: (id) => request(routes.solicitacoes.pendentesPorGestor(id)),
-      criar: (payload) => request(routes.solicitacoes.criar, { method: "POST", body: JSON.stringify(payload) }),
+      criar: (payload, arquivo) => {
+        if (!arquivo) {
+          return request(routes.solicitacoes.criar, { method: "POST", body: JSON.stringify(payload) });
+        }
+
+        const formData = new FormData();
+        Object.entries(payload).forEach(([campo, valor]) => {
+          if (valor !== undefined && valor !== null) formData.append(campo, String(valor));
+        });
+        formData.append("arquivo", arquivo);
+        return request(routes.solicitacoes.criar, { method: "POST", body: formData });
+      },
       aceitar: (id) => request(routes.solicitacoes.aceitar(id), { method: "PATCH" }),
       recusar: (id, motivoRecusa) => request(routes.solicitacoes.recusar(id), {
         method: "PATCH",

@@ -5,12 +5,9 @@ function userLoad() {
     sidebarOpen: true,
     mobileMenuOpen: false,
     solicitacoes: [],
-    noticiaSubmetidaId: null,
-    submissaoNoticiaCriada: false,
     carregandoSolicitacoes: false,
     enviandoSolicitacao: false,
     solicitacaoEmCancelamento: null,
-    imagemNoticiaEnviadaArquivo: null,
     erroSolicitacao: "",
     erroSolicitacoes: "",
     erroEmpresa: "",
@@ -332,30 +329,13 @@ function userLoad() {
       }
       this.enviandoSolicitacao = true;
       try {
-        if (!this.submissaoNoticiaCriada) {
-          const resposta = await api.solicitacoes.criar({
-            titulo: form.titulo.trim(),
-            conteudo: form.conteudo.trim(),
-            publicadaEm: new Date().toISOString(),
-            empresaId: Number(this.user.empresaId),
-            responsavelId: Number(this.user.id),
-          });
-          const submissao = resposta?.solicitacao || resposta;
-          this.noticiaSubmetidaId = submissao?.noticiaId ?? submissao?.noticia?.id ?? null;
-          this.submissaoNoticiaCriada = true;
-        }
-
-        if (form.imagem && this.imagemNoticiaEnviadaArquivo !== form.imagem) {
-          if (!this.noticiaSubmetidaId) {
-            throw new Error("A solicitação foi criada, mas a API não retornou o ID da notícia para enviar a imagem.");
-          }
-          await api.noticias.uploadImagem(this.noticiaSubmetidaId, form.imagem);
-          this.imagemNoticiaEnviadaArquivo = form.imagem;
-        }
-
-        this.noticiaSubmetidaId = null;
-        this.submissaoNoticiaCriada = false;
-        this.imagemNoticiaEnviadaArquivo = null;
+        await api.solicitacoes.criar({
+          titulo: form.titulo.trim(),
+          conteudo: form.conteudo.trim(),
+          publicadaEm: new Date().toISOString().slice(0, -1),
+          empresaId: Number(this.user.empresaId),
+          responsavelId: Number(this.user.id),
+        }, form.imagem);
         this.mensagemSolicitacao = "Notícia enviada para submissão e análise da equipe.";
         if (form.previewImagem?.startsWith("blob:")) URL.revokeObjectURL(form.previewImagem);
         form.titulo = "";
@@ -371,9 +351,7 @@ function userLoad() {
         await this.carregarSolicitacoes();
         await this.initEmpresa();
       } catch (error) {
-        this.erroSolicitacao = this.submissaoNoticiaCriada
-          ? error.message || "A submissão foi criada, mas não foi possível concluir o envio da imagem. Tente novamente."
-          : error.message || "Não foi possível enviar a notícia para análise.";
+        this.erroSolicitacao = error.message || "Não foi possível enviar a notícia para análise.";
       } finally {
         this.enviandoSolicitacao = false;
       }
