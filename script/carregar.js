@@ -272,7 +272,6 @@ function userLoad() {
 
       if (!empresaId) {
         this.user.empresa = null;
-        this.erroEmpresa = "Sua conta não está vinculada a uma empresa.";
         const result = await Swal.fire({
           title: "Deseja cadastrar a sua empresa?",
           icon: "info",
